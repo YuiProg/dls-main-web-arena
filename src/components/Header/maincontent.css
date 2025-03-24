@@ -1,53 +1,159 @@
-.main-content {
-    width: 100%;
-    height: 80vh;
-    background-color: white;
-    background-image: url('../images/background1.png');
-    z-index: 1000;
-    background-image: url('../images/background4.png');
-    background-repeat: no-repeat;
-    object-fit: contain;
-    z-index: 5000;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
     overflow-x: hidden;
 }
 
-.content-text{
-    font-family: 'Bai Jamjuree';
-    font-weight: bold;
-    width: 80vh;
-    height: 50vh;
-    transform: translateY(20vh) translateX(110vh);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    text-align: center;
-    flex-direction: column;
-    color: white;
-}
-.content-text p{
-    font-size: 20px;
+.element {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-.content-box{
-    font-size: x-large;
+.main-content {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    left: 0;
+}
+
+.main-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/background4.png');
+    background-repeat: no-repeat;
+    background-position: center center; /* Changed from left center to center center */
+    background-size: cover;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.content-text {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 600px;
+    padding: 40px;
+    margin-right: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    color: white;
+}
+
+.content-text h1 {
+    font-size: clamp(32px, 4vw, 48px);
+    margin: 0 0 20px 0;
+    width: 100%;
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.2;
+    font-weight: bold;
+}
+
+.content-text p {
+    font-size: clamp(18px, 2vw, 24px);
+    margin: 0 0 30px 0;
+    width: 100%;
+    opacity: 0.9;
+}
+
+.content-box {
+    width: auto;
+    min-width: 200px;
+    font-size: 18px;
     font-weight: bold;
     color: white;
-    width: 30vh;
-    height: 8vh;
+    padding: 15px 30px;
     background-color: #FE5425;
     border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-style: none;
+    border: 2px solid transparent;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
-.content-box:hover{
+
+.content-box:hover {
     background-color: #fe5426;
-    border-style: solid;
     border-color: black;
-    border-width: 1px;
+    transform: translateY(-2px);
+}
+
+/* Mobile First Approach */
+@media (max-width: 480px) {
+    .main-content {
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .main-content::before {
+        opacity: 0.1;
+    }
+
+    .content-text {
+        margin-right: 0;
+        padding: 20px;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .content-box {
+        padding: 12px 24px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .main-content {
+        justify-content: center;
+        padding: 40px;
+    }
+
+    .main-content::before {
+        opacity: 0.1;
+    }
+
+    .content-text {
+        margin-right: 0;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px) and (max-width: 1280px) {
+    .content-text {
+        max-width: 500px;
+        margin-right: 5%;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1281px) {
+    .content-text {
+        max-width: 600px;
+        margin-right: 10%;
+    }
 }
 
 

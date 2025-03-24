@@ -1,151 +1,202 @@
-@media (min-width: 1800px){
+/* Base styles */
+.contain {
+    width: 100%;
+    min-height: 100vh;
+    background-color: white;
+    font-family: 'Bai Jamjuree';
+}
 
-    .contain{
-        width: 100%;
-        height: 230vh;
-        background-color: white;
-        font-family: 'Bai Jamjuree';
+.org-text {
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    font-size: clamp(24px, 4vw, 32px);
+    background-color: #1a1a1a;
+    background-image: url("../images/NEWS.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 20px;
+}
+
+.org-contain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 300px;
+    padding: 20px;
+    color: white;
+    background-color: #DC1E1E;
+    border: none;
+    font-size: clamp(18px, 2.5vw, 24px);
+    border-radius: 10px;
+    box-shadow: var(--shadow-2xl);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.org-contain:hover {
+    border: 2px solid black;
+    background-color: #e33131;
+}
+
+.contain-image {
+    width: 100%;
+    padding: 40px 20px;
+}
+
+.contain-image h1 {
+    text-align: center;
+    margin: 40px 0;
+    font-size: clamp(24px, 3vw, 32px);
+}
+
+.img-contain {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding: 10px;
+}
+
+.img-contain p {
+    font-size: clamp(16px, 2vw, 20px);
+    text-align: center;
+    margin-top: 15px;
+}
+
+.img-1, .img-2, .img-3 {
+    background-color: white;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.image-1 {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.img-1 h1, .img-2 h1, .img-3 h1 {
+    font-size: clamp(20px, 2.5vw, 24px);
+    margin: 15px 0;
+    text-align: center;
+}
+
+.contain-faq {
+    width: 100%;
+    padding: 60px 20px;
+    background: linear-gradient(200deg, rgb(0, 0, 0) 70%, rgba(88,87,111,1) 85%, rgba(255,255,255,1) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+}
+
+.contain-faq h1 {
+    color: white;
+    font-size: clamp(24px, 3vw, 32px);
+    text-align: center;
+}
+
+.contain-text {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+}
+
+.contain-text-1, .contain-text-2 {
+    color: white;
+    text-align: start;
+    width: 100%;
+    max-width: 400px;
+    font-size: clamp(16px, 2vw, 20px);
+    line-height: 1.5;
+}
+
+/* Mobile First Approach */
+@media (max-width: 480px) {
+    .org-text {
+        background-image: none;
+        min-height: 60vh;
     }
 
-    .org-text{
-        width: 100%;
-        height: 110vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        text-align: center;
-        font-size: xx-large;
-        background-image: url("../images/NEWS.png");
-        background-size: contain;
-        object-fit: contain;
-        background-repeat: no-repeat;
+    .img-contain {
+        padding: 10px;
+    }
+
+    .img-1, .img-2, .img-3 {
+        padding: 10px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .org-text {
+        background-image: none;
+        min-height: 70vh;
+    }
+
+    .img-contain {
+        padding: 15px;
+    }
+}
+
+/* Larger Tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .img-contain {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .img-1, .img-2, .img-3 {
+        width: calc(50% - 10px);
+    }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+    .img-contain {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding: 20px;
+    }
+
+    .img-1, .img-2, .img-3 {
+        width: calc(33.333% - 20px);
+        max-width: 400px;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1800px) {
+    .org-text {
+        font-size: 32px;
     }
     
-    .org-contain{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 50px;
-        width: 50vh;
-        height: 15vh;
-        color: white;
-        background-color: #DC1E1E;
-        border: none;
-        font-size: xx-large;
-        border-radius: 10px;
-        box-shadow: var(--shadow-2xl);
-    }
-
-    .org-contain:hover{
-        border: solid;
-        border-width: 2px;
-        border-color: black;
-        background-color: #e33131;
-    }
-
-    .org-contain::after{
-        background-color: #e95e5e;
-    }
-
-    .contain-image{
-        
-        width: 100%;
-        height: 125vh;
-        
-    }
-    
-    .contain-image h1{
-        
-        text-align: center;
-        margin-top: 100px;
-    }
-
-    .img-contain{
-        margin-top: 50px;
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        gap: 100px;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .img-contain p{
-        font-size: x-large;
-        text-align: center;
-    }
-
-    .img-1{
-        background-color: white;
-        width: 45vh;
-        height: 90vh;
-        border-radius: 20px;
-    }
-    .image-1{
-        width: inherit;
-        border-radius: 20px;
-    }
-
-    .img-2{
-        background-color: white;
-        width: 45vh;
-        height: 90vh;
-        border-radius: 20px;
-    }
-
-    .img-3{
-        background-color: white;
-        width: 45vh;
-        height: 90vh;
-        border-radius: 20px;
-    }
-
-    .contain-faq{
-        width: 100%;
-        height: 125vh;
-        background: linear-gradient(200deg, rgb(0, 0, 0) 70%, rgba(88,87,111,1) 85%, rgba(255,255,255,1) 100%);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 150px;
-        
-        
-    }
-
-    .contain-faq h1{
-        
-        color: white;
-    }
-
-    .contain-text{
-        display: flex;
-        width: 100%;
-        height: 60vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 30vh;
-        
-    }
-
-    .contain-text-1{
-        color: black;
-        text-align: start;
-        width: 30%;
-        height: 50vh;
-        font-size: 30px;
-        color: white;
-    }
-
-    .contain-text-2{
-        color: black;
-        text-align: start;
-        width: 30%;
-        height: 50vh;
-        font-size: 30px;
-        color: white;
+    .img-1, .img-2, .img-3 {
+        max-width: 450px;
     }
 }

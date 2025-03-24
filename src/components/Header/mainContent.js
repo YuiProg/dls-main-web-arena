@@ -6,43 +6,28 @@ import { NavLink } from "react-router";
 
 const MainContent = () => {
     return (
-        <div style=
-        {
-            {
-                zIndex: 100
-            }
-        }>
-            <Element name="home">
-            <div className="main-content" style=
-            {
-                {
-                    margin: 0
-                }
-            }>
-                <div className = "content-text">
-                    CREATE, ORGANIZE, AND JOIN <br /> TOURNAMENTS
+        <Element name="home" className="element">
+            <div className="main-content">
+                <div className="content-text">
+                    <h1>CREATE, ORGANIZE, AND JOIN TOURNAMENTS</h1>
                     <p>Join us and ignite the gamer within you!</p>
                     <NavLink to='/SignUp' style={{textDecoration: 'none'}}>
-                    <button className ="content-box">
-                    <FaArrowCircleRight
-                    style={{
-                        marginRight: '20px',
-                        color: 'black'
-                    }}
-                    size="40px"
-                    />
-                    JOIN US NOW!
-                    </button>
+                        <button className="content-box">
+                            <FaArrowCircleRight
+                                style={{
+                                    marginRight: '10px',
+                                    color: 'black',
+                                    width: '20px',
+                                    height: '20px'
+                                }}
+                            />
+                            JOIN US NOW!
+                        </button>
                     </NavLink>
                 </div>
-
-
-
             </div>
         </Element>
-        </div>
-
     );
 }
 
-export default MainContent
+export default MainContent;

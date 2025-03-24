@@ -7,18 +7,19 @@
 
 /* Sidebar - Stays Fixed */
 .sidebar {
-  width: 220px; /* Keep width as is */
-  background-color: #000; /* Keep black background */
+  width: 220px;
+  background-color: #000;
   color: white;
   padding: 20px;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: fixed; /* Keep it fixed */
+  position: fixed;
   left: 0;
   top: 0;
   padding-left: 0px;
+  z-index: 1000;
 }
 
 .user-info {
@@ -55,7 +56,7 @@
 }
 
 .logo {
-  width: 120px; /* Adjust size as needed */
+  width: 120px;
   height: auto;
 }
 
@@ -95,10 +96,89 @@
 
 /* Main Content - Starts on the Right */
 .main-content {
-  margin-left: 220px; /* Same as sidebar width */
+  margin-left: 220px;
   flex-grow: 1;
   padding: 20px;
-  background-color: #e0e0e0; /* Keep gray background */
-  overflow-y: auto; /* Scrollable content */
+  background-color: #e0e0e0;
+  overflow-y: auto;
   height: 100vh;
+}
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .main-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 180px;
+    padding: 15px;
+  }
+  
+  .main-content {
+    margin-left: 180px;
+    padding: 15px;
+  }
+  
+  .logo {
+    width: 100px;
+  }
+  
+  .sidebar-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+    padding: 10px;
+  }
+  
+  .main-content {
+    margin-left: 60px;
+    padding: 10px;
+  }
+  
+  .logo {
+    width: 40px;
+  }
+  
+  .sidebar-text {
+    display: none;
+  }
+  
+  .sidebar-item {
+    justify-content: center;
+    padding: 10px;
+  }
+  
+  .sidebar-icon {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 50px;
+    padding: 8px;
+  }
+  
+  .main-content {
+    margin-left: 50px;
+    padding: 8px;
+  }
+  
+  .logo {
+    width: 30px;
+  }
+  
+  .sidebar-icon {
+    font-size: 20px;
+  }
 }

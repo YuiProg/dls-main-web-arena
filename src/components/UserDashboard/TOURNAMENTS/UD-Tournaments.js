@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
-import '../TOURNAMENTS/ud-tourna.css';
 import { Element } from "react-scroll";
 import { DB } from "../../firebase-config";
 import { collection, getDocs } from "firebase/firestore";
+import './ud-tourna.css';
 
 const UDTournaments = () => {
     const [gameSET, setGame] = useState('N/A');
     const [tournaments, setTournaments] = useState([]);
     const [selectedTournamentId, setSelectedTournamentId] = useState(null);
-    const [selectedTab, setSelectedTab] = useState('overview'); // Tabs: overview, participants, brackets, media, stats, announcements, contact
+    const [selectedTab, setSelectedTab] = useState('overview');
+    const [detailsTab, setDetailsTab] = useState('details');
     const [isLoading, setIsLoading] = useState(true);
+    
+    // Registration panel states
+    const [joinStep, setJoinStep] = useState(1);
+    const [showCreateAccount, setShowCreateAccount] = useState(false);
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -34,42 +39,33 @@ const UDTournaments = () => {
     }, []);
 
     const renderTournamentCard = (tournament) => {
-        console.log("Rendering tournament card:", tournament.id, tournament.name);
         return (
             <div 
                 key={tournament.id} 
                 className="tournament-card"
                 onClick={() => {
-                    console.log("Selected tournament:", tournament.id, tournament.name);
                     setSelectedTournamentId(tournament.id);
-                    setSelectedTab('overview'); // Reset to overview tab when selecting a new tournament
+                    setSelectedTab('overview');
                 }}
             >
-                {/* Tournament Banner/Poster */}
                 <div className="tournament-banner">
                     <img 
                         src={tournament.poster || require('../../images/GIFS/222056.gif')} 
                         alt={tournament.name} 
                     />
                 </div>
-                
-                {/* Tournament Title */}
                 <div className="tournament-title">
                     {tournament.name || 'Unnamed Tournament'}
                 </div>
-                
-                {/* Tournament Details */}
                 <div className="tournament-info">
                     <div className="tournament-date">
                         <span className="icon">📅</span>
                         <span>{tournament.dateCreated || 'N/A'}</span>
                         <span className="time">{tournament.time || '7:00 AM PST'}</span>
                     </div>
-                    
                     <div className="tournament-location">
                         <span>{tournament.location || 'Online'}</span>
                     </div>
-                    
                     <div className="tournament-organizer">
                         <img 
                             src={tournament.ownerLogo || require('../../images/GIFS/222056.gif')} 
@@ -84,20 +80,9 @@ const UDTournaments = () => {
     };
 
     const renderTournamentDetails = (tournamentId) => {
-        // Log the ID we're searching for
-        console.log("Looking for tournament with ID:", tournamentId);
-        
-        // Log all tournament IDs for comparison
-        console.log("Available tournament IDs:", tournaments.map(t => t.id));
-        
-        // Find the tournament with matching ID
         const tournament = tournaments.find(t => t.id === tournamentId);
         
-        // Log the found tournament
-        console.log("Found tournament:", tournament);
-        
         if (!tournament) {
-            console.error("Tournament not found with ID:", tournamentId);
             return (
                 <div className="tournament-details-panel">
                     <div className="details-header">
@@ -111,168 +96,255 @@ const UDTournaments = () => {
 
         return (
             <div className="tournament-details-panel">
-                <div className="details-header">
-                    <h1>{tournament.name || 'Unnamed Tournament'}</h1>
-                    <button className="close-btn" onClick={() => setSelectedTournamentId(null)}>✕</button>
-                </div>
-                
-                {/* Tournament Overview Info */}
-                <div className="tournament-overview">
-                    <div className="overview-content">
-                        <img 
-                            src={tournament.poster || require('../../images/GIFS/222056.gif')} 
-                            alt={tournament.name || 'Tournament Poster'} 
-                            className="details-poster" 
-                        />
-                        
-                        <div className="overview-info">
-                            <p>
-                                <strong>Host:</strong> {tournament.owner || 'Unknown'} | 
-                                <strong>Game:</strong> {tournament.game || 'N/A'} | 
-                                <strong>Type:</strong> {tournament.type || 'N/A'} | 
-                                <strong>Mode:</strong> {tournament.mode || 'N/A'} | 
-                                <strong>Date Created:</strong> {tournament.dateCreated || 'N/A'} | 
-                                <strong>Status:</strong> {tournament.status || 'N/A'}
-                            </p>
+                <div className="tournament-header">
+                    <div className="tournament-logo">
+                        <div className="tournament-org-info">
+                            <span className="org-name">Tournament Organizer: {tournament.owner || "ESPORTS ORGANIZATION"}</span>
                         </div>
+                        <div className="back-container">
+                            <button 
+                                className="back-btn" 
+                                onClick={() => setSelectedTournamentId(null)}
+                            >
+                                Back to Tournaments
+                            </button>
+                        </div>
+                    </div>
+                    <div className="tournament-title-container">
+                        <h1 className="tournament-title-large">Tournament Name:     {tournament.name || "THE NATIONAL GRAND FINALS"}</h1>
                     </div>
                 </div>
                 
-                {/* Tabs Navigation */}
-                <div className="tabs">
+                {/* Main Tabs Navigation */}
+                <div className="main-tabs">
                     <button
                         className={selectedTab === 'overview' ? 'active' : ''}
                         onClick={() => setSelectedTab('overview')}
                     >
-                        Overview
+                        OVERVIEW
                     </button>
                     <button
                         className={selectedTab === 'participants' ? 'active' : ''}
                         onClick={() => setSelectedTab('participants')}
                     >
-                        Participants
+                        PARTICIPANTS
                     </button>
                     <button
                         className={selectedTab === 'brackets' ? 'active' : ''}
                         onClick={() => setSelectedTab('brackets')}
                     >
-                        Brackets
+                        BRACKETS
                     </button>
                     <button
                         className={selectedTab === 'media' ? 'active' : ''}
                         onClick={() => setSelectedTab('media')}
                     >
-                        Media
+                        MEDIA
                     </button>
                     <button
                         className={selectedTab === 'stats' ? 'active' : ''}
                         onClick={() => setSelectedTab('stats')}
                     >
-                        Stats
+                        STATS
                     </button>
                     <button
                         className={selectedTab === 'announcements' ? 'active' : ''}
                         onClick={() => setSelectedTab('announcements')}
                     >
-                        Announcements
+                        ANNOUNCEMENTS
                     </button>
                     <button
                         className={selectedTab === 'contact' ? 'active' : ''}
                         onClick={() => setSelectedTab('contact')}
                     >
-                        Contact
+                        CONTACT
                     </button>
                 </div>
                 
-                {/* Tab Content */}
-                <div className="tab-content">
-                    {selectedTab === 'overview' && (
-                        <div>
-                            <h2>Overview</h2>
-                            <p>{tournament.details || 'No details available for this tournament.'}</p>
+                {/* Tournament Banner */}
+                <div className="tournament-banner-large">
+                    <img 
+                        src={tournament.poster} 
+                        alt="Tournament Banner" 
+                    />
+                </div>
+                
+                {/* Two Column Layout for Content and Registration */}
+                <div className="tournament-content-container">
+                    {/* Tournament Content */}
+                    <div className="tournament-content">
+                        {/* Details Tabs */}
+                        <div className="details-tabs">
+                            <button 
+                                className={detailsTab === 'details' ? 'active' : ''}
+                                onClick={() => setDetailsTab('details')}
+                            >
+                                DETAILS
+                            </button>
+                            <button
+                                className={detailsTab === 'rules' ? 'active' : ''}
+                                onClick={() => setDetailsTab('rules')}
+                            >
+                                RULES
+                            </button>
+                            <button
+                                className={detailsTab === 'prizes' ? 'active' : ''}
+                                onClick={() => setDetailsTab('prizes')}
+                            >
+                                PRIZES
+                            </button>
+                            <button
+                                className={detailsTab === 'schedule' ? 'active' : ''}
+                                onClick={() => setDetailsTab('schedule')}
+                            >
+                                SCHEDULE
+                            </button>
+                            <button
+                                className={detailsTab === 'contact' ? 'active' : ''}
+                                onClick={() => setDetailsTab('contact')}
+                            >
+                                CONTACT
+                            </button>
                         </div>
-                    )}
-                    {selectedTab === 'participants' && (
-                        <div>
-                            <h2>Participants</h2>
-                            {tournament.participants && tournament.participants.length > 0 ? (
-                                <ul className="participants-list">
-                                    {tournament.participants.map((participant, index) => (
-                                        <li key={index}>{participant.name || 'Unnamed Participant'}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p>No participants have joined this tournament yet.</p>
-                            )}
-                        </div>
-                    )}
-                    {selectedTab === 'brackets' && (
-                        <div>
-                            <h2>Brackets</h2>
-                            {tournament.brackets ? (
-                                <div className="brackets-container">
-                                    {/* Render brackets here */}
-                                    <p>Brackets are available for this tournament.</p>
+                        
+                        {/* Details Content */}
+                        <div className="details-content">
+                            {detailsTab === 'details' && (
+                                <div className="details-section">
+                                    <h3>{tournament.game || "MOBILE LEGENDS, LEAGUE OF LEGENDS, AND VALORANT"}</h3>
+                                    
+                                    <div className="detail-item">
+                                        <div className="detail-label">DATE AND TIME</div>
+                                        <div className="detail-value">{tournament.dateCreated || "SUNDAY MARCH 2, 2025"}</div>
+                                    </div>
+                                    
+                                    <div className="detail-item">
+                                        <div className="detail-label">PRIZES</div>
+                                        <div className="detail-value">{tournament.prizes || "$15"}</div>
+                                    </div>
+                                    
+                                    <div className="detail-item">
+                                        <div className="detail-label">COMPETITION FORMAT</div>
+                                        <div className="detail-value">{tournament.mode || "TOURNAMENT DRAFT"}</div>
+                                    </div>
                                 </div>
-                            ) : (
-                                <p>Tournament brackets are not yet available.</p>
+                            )}
+                            
+                            {detailsTab === 'rules' && (
+                                <div className="rules-section">
+                                    <h3>Tournament Rules</h3>
+                                    <p>{tournament.rules || "Tournament rules will be displayed here."}</p>
+                                </div>
+                            )}
+                            
+                            {detailsTab === 'prizes' && (
+                                <div className="prizes-section">
+                                    <h3>Prize Distribution</h3>
+                                    <p>{tournament.prizes || "Prize information will be displayed here."}</p>
+                                </div>
+                            )}
+                            
+                            {detailsTab === 'schedule' && (
+                                <div className="schedule-section">
+                                    <h3>Tournament Schedule</h3>
+                                    <p>{tournament.schedule || "Tournament schedule will be displayed here."}</p>
+                                </div>
+                            )}
+                            
+                            {detailsTab === 'contact' && (
+                                <div className="contact-section">
+                                    <h3>Contact Information</h3>
+                                    <p>{tournament.contact || "Contact information will be displayed here."}</p>
+                                </div>
                             )}
                         </div>
-                    )}
-                    {selectedTab === 'media' && (
-                        <div>
-                            <h2>Media</h2>
-                            {tournament.media && tournament.media.length > 0 ? (
-                                <div className="media-gallery">
-                                    {tournament.media.map((item, index) => (
-                                        <div key={index} className="media-item">
-                                            {/* Render media items here */}
-                                            <img src={item.url || require('../../images/GIFS/222056.gif')} alt={item.description || 'Tournament media'} />
+                    </div>
+                    
+                    {/* Registration Panel */}
+                    <div className="registration-panel">
+                        <div className="registration-step">
+                            <div className="step-number">1.</div>
+                            <div className="step-content">
+                                <div className="step-title">JOIN</div>
+                                {joinStep === 1 && (
+                                    <div className="step-actions">
+                                        {!showCreateAccount ? (
+                                            <>
+                                                <button 
+                                                    className="create-account-btn"
+                                                    onClick={() => setShowCreateAccount(true)}
+                                                >
+                                                    CREATE ACCOUNT
+                                                </button>
+                                                <div className="login-link">
+                                                    <a href="#login">Login</a>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="create-account-form">
+                                                <button 
+                                                    className="create-account-confirm"
+                                                    onClick={() => {
+                                                        setShowCreateAccount(false);
+                                                        setJoinStep(2);
+                                                    }}
+                                                >
+                                                    Create Account
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className={`registration-step ${joinStep >= 2 ? 'active' : 'inactive'}`}>
+                            <div className="step-number">2.</div>
+                            <div className="step-content">
+                                <div className="step-title">REGISTER TEAM</div>
+                                {joinStep === 2 && (
+                                    <div className="step-actions">
+                                        <button 
+                                            className="register-team-btn"
+                                            onClick={() => setJoinStep(3)}
+                                        >
+                                            REGISTER
+                                        </button>
+                                        <div className="or-separator">OR</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className={`registration-step ${joinStep >= 3 ? 'active' : 'inactive'}`}>
+                            <div className="step-number">3.</div>
+                            <div className="step-content">
+                                <div className="step-title">REGISTRATION FIELDS</div>
+                                {joinStep === 3 && (
+                                    <div className="registration-fields">
+                                        {/* Registration fields would go here */}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        
+                        <div className={`registration-step ${joinStep >= 4 ? 'active' : 'inactive'}`}>
+                            <div className="step-number">4.</div>
+                            <div className="step-content">
+                                <div className="step-title">JOIN TOURNAMENT</div>
+                                {joinStep === 4 && (
+                                    <div className="join-options">
+                                        <button className="auto-join-btn">
+                                            Auto Join
+                                        </button>
+                                        <div className="join-message">
+                                            Once enough players register
                                         </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p>No media content has been uploaded for this tournament.</p>
-                            )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    )}
-                    {selectedTab === 'stats' && (
-                        <div>
-                            <h2>Stats</h2>
-                            {tournament.stats ? (
-                                <div className="stats-container">
-                                    {/* Render stats here */}
-                                    <p>Tournament statistics are available.</p>
-                                </div>
-                            ) : (
-                                <p>Tournament statistics are not yet available.</p>
-                            )}
-                        </div>
-                    )}
-                    {selectedTab === 'announcements' && (
-                        <div>
-                            <h2>Announcements</h2>
-                            {tournament.announcements && tournament.announcements.length > 0 ? (
-                                <div className="announcements-list">
-                                    {tournament.announcements.map((announcement, index) => (
-                                        <div key={index} className="announcement-item">
-                                            <h3>{announcement.title || 'Announcement'}</h3>
-                                            <p className="announcement-date">{announcement.date || 'N/A'}</p>
-                                            <p>{announcement.content || 'No content'}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p>No announcements have been made for this tournament.</p>
-                            )}
-                        </div>
-                    )}
-                    {selectedTab === 'contact' && (
-                        <div>
-                            <h2>Contact</h2>
-                            <p>{tournament.contact || 'No contact information available for this tournament.'}</p>
-                        </div>
-                    )}
+                    </div>
                 </div>
             </div>
         );
@@ -283,38 +355,34 @@ const UDTournaments = () => {
         ? tournaments 
         : tournaments.filter((tournament) => tournament.game === gameSET);
 
-            console.log("Current filter:", gameSET);
-            console.log("Filtered tournaments:", filteredTournaments);
-
-            return (
-                <Element name="tournaments">
-                    <div className="tournaments-page">
-                        <h1 className="heading">TOURNAMENTS</h1>
-                        
-                        {/* Game Filter Options */}
-        <div className="games-container">
-            <div 
-                className={`games-choice ${gameSET === 'VALORANT' ? 'active' : ''}`} 
-                onClick={() => setGame(gameSET === 'VALORANT' ? 'N/A' : 'VALORANT')}
-            >
-                <img src={require('../../images/GIFS/valorant-logo.jpg')} alt="VALORANT" />
-            </div>
-            
-            <div 
-                className={`games-choice ${gameSET === 'LEAGUE OF LEGENDS' ? 'active' : ''}`} 
-                onClick={() => setGame(gameSET === 'LEAGUE OF LEGENDS' ? 'N/A' : 'LEAGUE OF LEGENDS')}
-            >
-                <img src={require('../../images/GIFS/lol-logo.jpg')} alt="LEAGUE OF LEGENDS" />
-            </div>
-            
-            <div 
-                className={`games-choice ${gameSET === 'MOBILE LEGENDS' ? 'active' : ''}`} 
-                onClick={() => setGame(gameSET === 'MOBILE LEGENDS' ? 'N/A' : 'MOBILE LEGENDS')}
-            >
-                <img src={require('../../images/GIFS/mlbb-logo.jpg')} alt="MOBILE LEGENDS" />
-            </div>
-        </div>
-
+    return (
+        <Element name="tournaments">
+            <div className="tournaments-page">
+                <h1 className="heading">TOURNAMENTS</h1>
+                
+                {/* Game Filter Options */}
+                <div className="games-container">
+                    <div 
+                        className={`games-choice ${gameSET === 'VALORANT' ? 'active' : ''}`} 
+                        onClick={() => setGame(gameSET === 'VALORANT' ? 'N/A' : 'VALORANT')}
+                    >
+                        <img src={require('../../images/GIFS/valorant-logo.jpg')} alt="VALORANT" />
+                    </div>
+                    
+                    <div 
+                        className={`games-choice ${gameSET === 'LEAGUE OF LEGENDS' ? 'active' : ''}`} 
+                        onClick={() => setGame(gameSET === 'LEAGUE OF LEGENDS' ? 'N/A' : 'LEAGUE OF LEGENDS')}
+                    >
+                        <img src={require('../../images/GIFS/lol-logo.jpg')} alt="LEAGUE OF LEGENDS" />
+                    </div>
+                    
+                    <div 
+                        className={`games-choice ${gameSET === 'MOBILE LEGENDS' ? 'active' : ''}`} 
+                        onClick={() => setGame(gameSET === 'MOBILE LEGENDS' ? 'N/A' : 'MOBILE LEGENDS')}
+                    >
+                        <img src={require('../../images/GIFS/mlbb-logo.jpg')} alt="MOBILE LEGENDS" />
+                    </div>
+                </div>
 
                 {/* Tournament Grid */}
                 <div className="tournament-grid">
