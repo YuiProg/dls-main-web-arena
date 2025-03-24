@@ -80,13 +80,11 @@ const ProfileView = () => {
         }
     }, [users, displayUser, page]);
 
+    /* Delete previos provile pic or cover pic sa storage. Para hindi mapuno storage */
     const deletePreviousImage = async (imageUrl) => {
         if (!imageUrl) return;
         
         try {
-            // Extract the storage path from the URL
-            // Firebase Storage URLs typically look like:
-            // https://firebasestorage.googleapis.com/v0/b/[PROJECT_ID].appspot.com/o/[FILE_PATH]?alt=media&token=[TOKEN]
             const urlPath = decodeURIComponent(imageUrl.split('/o/')[1].split('?')[0]);
             console.log(urlPath)
             const imageRef = ref(storage, urlPath);
@@ -94,11 +92,11 @@ const ProfileView = () => {
             await deleteObject(imageRef);
             console.log('Previous image deleted successfully');
         } catch (error) {
-            console.error('Error deleting previous image:', error);
+            console.error('Error deleting previous imagee:', error);
         }
     };
 
-    // Handle file upload for profile and cover pictures
+    /* Upload Picture sa storage sa users/userID folder. */
     const handleImageUpload = async (e, imageType) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -106,10 +104,10 @@ const ProfileView = () => {
         setUploading(true);
         setUploadProgress(0);
         
-        // Create a unique file path in Firebase Storage
+
         const userId = auth.currentUser.uid;
         const timestamp = new Date().getTime();
-        const filePath = `users/${userId}/${imageType}_${timestamp}`;
+        const filePath = `users/${userId}/${imageType}_${timestamp}`; // The file path can be change sa storage
         const storageRef = ref(storage, filePath);
         
         // Create upload task
@@ -171,7 +169,7 @@ const ProfileView = () => {
         );
     };
 
-    // Component for rendering user profile and cover images
+    /* const function para icall yung cover pic and profile */
     const ProfileHeader = () => {
         return (
             <div className="header-image">
