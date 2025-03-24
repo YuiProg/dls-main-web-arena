@@ -10,12 +10,14 @@ const Friends = () => {
     const [user_friends_main , setUserFriends] = useState([]);
     const [all_users, setAllUsers] = useState([]);
     const [friends_search, setFriendsSearch] = useState('');
+    const [user, setUser] = useState([]);
 
     useEffect(() => { //real time friends fetch
         const userDocRef = doc(DB, 'users', auth.currentUser.uid);
         const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
                 const user_friends = docSnapshot.data().friends;
+                setUser([docSnapshot.data()]);
                 setUserFriends(user_friends);
             } else {
                 console.log("error fetching");
@@ -42,7 +44,6 @@ const Friends = () => {
         return () => unsubscribe();
 
     }, []);
-    
     const AddFriend = async (data) => {
 
         try {
@@ -174,19 +175,50 @@ const Friends = () => {
         </div>
     );
 
+    //for friendRequest bullshit
+    let friendRequests = [];
+    const DisplayFriendRequests = user.map(data => data.friendRQ);
+    
+    for (let i = 0; i < DisplayFriendRequests.length; i++) {
+        friendRequests = DisplayFriendRequests[i];
+    }
+
+    const DisplayFriendRQS = friendRequests.map((data, index) => {
+        if (index < 2) {
+            return <div className="friends-main-container">
+            <div style={{width: 'inherit', height: 'inherit', position: 'absolute', zIndex: 5}}/>
+            <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
+            <div>
+                <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50}}/>
+            </div>
+            <div style={{position: 'relative'}}>
+                <h1>{data.username}</h1>
+                <div style=
+                {
+                    {
+                        position: 'relative',
+                        zIndex: 50,
+                    }
+                }>
+                </div>
+            </div>
+        </div>
+        }
+    });
+
     return (
         <div className="friends-main">
             <div className="friends-selection">
                 <h1 onClick={() => setPage(0)}>FRIENDS</h1>
                 <h1 onClick={() => setPage(1)}>FIND FRIENDS</h1>
-                <h1>FRIEND REQUESTS</h1>
+                <h1 onClick={() => setPage(2)}>FRIEND REQUESTS</h1>
             </div>
             <div className="friends-content-container">
                 {page === 0 ? DisplayUserFriends : page === 1 ? 
                 <div>
                     <input type="text" onChange={(text) => setFriendsSearch(text.target.value)} placeholder="Search for friends - Or enter ID" style={{width: '99%', height: 30, borderRadius: 10, border: 'none', padding: 10, marginBottom: 10}}/>
                     {friends_search === '' ? DisplayAllUsers : DisplaySearchedUsers}
-                </div> : null}
+                </div> : DisplayFriendRQS}
             </div>
         </div>
     );
