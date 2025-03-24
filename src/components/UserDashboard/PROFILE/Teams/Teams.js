@@ -46,8 +46,8 @@ const Teams = () => {
             const teamsCollection = collection(DB, 'teams');
             const unsubscribe = onSnapshot(teamsCollection, (querySnapshot) => {
               const teamsData = querySnapshot.docs.map((doc) => doc.data());
+              console.log(teamsData);
               setTeams(teamsData);
-              
               setLoading(false);
             });
     
@@ -64,6 +64,13 @@ const Teams = () => {
 
     const submit = async (e) => {
         e.preventDefault();
+
+        const date = new Date();
+
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+
         try {
             if (header && name.trim() !== '' && description.trim() !== '') {
                 setLoading(true);
@@ -74,10 +81,11 @@ const Teams = () => {
                 await uploadBytes(headerRef, header).then(async () => {
                     url = await getDownloadURL(headerRef);
                     await setDoc(doc(DB, 'teams', auth.currentUser.uid), {
-                        owner: auth.currentUser.uid,
+                        owner: user,
                         Name: name,
                         Desc: description,
                         Header: url,
+                        Date: `${month}-${day}-${year}`,
                         players: []
                     }).then(async () => {
                         const teamData = await getDoc(doc(DB, 'teams', auth.currentUser.uid));
@@ -132,6 +140,9 @@ const Teams = () => {
                         <div style={{width: 'inherit', height: 'inherit', backgroundColor: 'rgba(0, 0, 0, 0.644)', position: 'absolute', borderRadius: 10}}/>
                         <div style={{position: 'absolute'}}>
                             <h1 style={{marginLeft: 25}}>{data.Name}</h1>
+                            <p>PLAYERS: {data.players.length}/6</p>
+                            {data.players.length < 6 ? <p>STATUS: <span style={{fontWeight: 'bold'}}>OPEN</span></p> : <p>STATUS: <span style={{fontWeight: 'bold'}}>CLOSED</span></p>}
+                            <p>DATE CREATED: {data.Date}</p>
                             <p>ID: {data.owner}</p>
                             <button style={{zIndex: 999, marginLeft: 30, width: 100, height: 30, border:'none', backgroundColor: 'green', borderRadius:10, color: 'white', cursor: 'pointer'}} onClick={() => JoinTeam(data)}>JOIN TEAM</button>
                         </div>

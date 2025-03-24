@@ -8,6 +8,7 @@ import DisplayUser from "./UserProfileDisplay";
 import Teams from "./Teams/Teams";
 import { FaCamera } from "react-icons/fa";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
+import Friends from "./Friends/Friends";
 
 const ProfileView = () => {
     //gawin tong optimized use onsnapshot instead of getdocs
@@ -73,12 +74,10 @@ const ProfileView = () => {
     };
 
     useEffect(() => { //load mga data isang beses lang
-        if (!displayUser && page === 2) {
-            fetchData();
-            fetchUserData();
-            fetchAllUsers();
-        }
-    }, [users, displayUser, page]);
+        fetchData();
+        fetchUserData();
+        fetchAllUsers();
+    },[]);
 
     /* Delete previos provile pic or cover pic sa storage. Para hindi mapuno storage */
     const deletePreviousImage = async (imageUrl) => {
@@ -349,184 +348,6 @@ const ProfileView = () => {
     }
 
         
-    const RenderFriends = () => {
-
-    const friendFilter = allUsers.filter(friends => friends.id !== users.id);
-
-    const RequestFriend = async (id) => { //add friend function
-        let requests = [];
-        const request = doc(DB, 'users', id);
-        const fetch = await getDoc(request);
-        const user = fetch.data().friendRQ; //get requests
-        requests = Array.isArray(user) ? user : [];
-
-        const checkDuplicate = requests.some(data => data.id === users.id);
-        const check_friend = users.friends.some(data => data.id === fetch.data().id)
-
-        //pero yung some chinecheck niya each element kung may kaparehas ba
-        if (checkDuplicate || check_friend) {
-            alert('REQUEST ALREADY SENT');
-            return;
-        } else {
-            try {
-                requests.push(users);
-                // requests.shift();
-                console.log(requests);
-                await setDoc(doc(DB, 'users', id), { //push requests to DB
-                    ...fetch.data(),    
-                    friendRQ: requests
-                }).then(() => {
-                    alert('Request Sent.');
-                });
-    
-            } catch (error) {
-                console.log('Error in line 163 UserProfile.js (fetch error)' + error.message);
-            }
-        }
-    }
-    const FindFriends = friendFilter.map((data, index) => 
-        <div
-        key={index} 
-        onClick={() => 
-            {
-                // RequestFriend(data.id);
-                displayUser ? setDisplayUser(false) : setDisplayUser(true);
-                setSelectedUser(data);
-            }}
-        className="friend-card" style={{marginBottom: 50}}>
-            <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>        
-            <img src={require('../../images/icons8-person-96.png')}/>
-        </div>
-    );
-
-    const searchFriends = allUsers.filter((data) => data.username === USERSEARCHED || data.id === USERSEARCHED);
-
-    const DisplaySearched = searchFriends.map((data,index) => 
-        <div
-        key={index} 
-        onClick={() => 
-            {
-                RequestFriend(data.id);
-            }}
-        className="friend-card" style={{marginBottom: 50}}>
-            <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>        
-            <img src={require('../../images/icons8-person-96.png')}/>
-        </div>
-    );
-
-    
-    const AcceptFriend = async (user) => { //this some data engineering shi tho
-        let newList = [];
-        let friendRequestList = [];
-        const currentFriends = Array.isArray(users.friends) ? users.friends : [];
-        const userRequests = users.friendRQ;
-        newList = currentFriends;
-        friendRequestList = userRequests;
-        
-        try {
-            const fetch = await getDoc(doc(DB, 'users', user));
-            const DATA = await getDoc(doc(DB, 'users', users.id));
-            const selectedUser = fetch.data();
-
-            const checker = newList.some(data => data.id === user);
-
-            if (checker) { //CHECK KUNG NAG EEXIST NA NGA BA YUNG I AADD SA DB
-                alert('request already sent');
-                return;
-            }
-
-            newList.push(selectedUser); 
-            //FETCH MUNA NATEN MGA NAG EEXIST NA FRIENDS NA THEN UPDATE THE DB
-            //CHECK IF NAG EEXIST NA ANG SELECTED PERSON SA DB
-
-            const filtered = friendRequestList.filter(data => data.id !== user);
-
-            await setDoc(doc(DB,'users',users.id), { //ADD THE UPDATED ARRAY DITO
-                ...DATA.data(),
-                friends: newList,
-                friendRQ: filtered
-            }).then(async () => {            
-                await setDoc(doc(DB, 'users', selectedUser.id), {
-                    friends: arrayUnion(users) // nag ai nako dito kakahilo to eh
-                }, { merge: true });
-            });
-        } catch (error) {
-            console.log('ERROR FETCHING AT LINE 236 USERPROFILE.JS ' + error.message);
-        } finally {             
-            fetchData(); //reload data
-            fetchAllUsers();
-            fetchUserData();
-        }
-    }
-
-    const MainFriends = users.friends.map((data,index) => 
-        <div
-        key={index} 
-        className="friend-card" style={{marginBottom: 50}} onClick=
-        {
-            () => 
-            {
-                displayUser ? setDisplayUser(false) : setDisplayUser(true);
-                setSelectedUser(data);
-            }
-        }>
-            <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>        
-            <img src={require('../../images/icons8-person-96.png')}/>
-        </div>
-    );
-
-    const FriendRequests = users.friendRQ.map((data, index) => 
-        <div
-        key={index} 
-        className="friend-card" style={{marginBottom: 50}}>
-            <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>        
-            <img src={require('../../images/icons8-person-96.png')}/>
-            <button id="btn" value={data.id} className="js-btn" onClick={(user) => AcceptFriend(user.target.value)}>ACCEPT</button>
-            <button id="btn" className="js-btn">DECLINE</button>
-        </div>
-    );
-
-
-        return (
-            <div className='friends-tab'>
-                <h1 className="friend-selection"
-                onClick={() => setFPP(0)}>
-                    FRIENDS {`(${Object.keys(users.friends).length})`}
-                </h1>
-                <h1 className="friend-selection"
-                onClick={() => setFPP(1)}>
-                    FIND FRIENDS
-                </h1>
-                <h1 className="friend-selection"
-                onClick={() => setFPP(2)}>
-                    {Object.keys(users.friendRQ).length === 0 
-                    ? 'FRIEND REQUEST (none)' : 
-                    `FRIEND REQUESTS (${Object.keys(users.friendRQ).length})`}
-                </h1>
-                {FRIENDS_PAGE === 1 ? <div>
-                <input type="text" 
-                    style=
-                    {
-                        {
-                            width: '50%',
-                            marginBottom: 20
-                        }
-                    } placeholder="Enter ID or Name" onChange={(text) => 
-                    {
-                        searchedUSER = text.target.value;
-                    }}/>
-                    <FaSearch color="white" style={{marginLeft: 20, cursor: 'pointer'}} className="search" onClick={() => setSearchedUser(searchedUSER)}/>
-                </div> : null}
-                <div className="friends-grid">
-                {USERSEARCHED === '' 
-                ? (FRIENDS_PAGE === 1 ? FindFriends : FRIENDS_PAGE === 2 ? FriendRequests : MainFriends) 
-                : DisplaySearched}
-
-                </div>
-            </div>
-        );
-    }
-    
     const RenderDisplay = () => {
         return (
             <div className="profileview">
@@ -559,16 +380,10 @@ const ProfileView = () => {
                     </ul>
                 </div>
                 <div className="Main-Content-Profile">
-                    {page === 1 ? <RenderTournaments/> : page === 2 ? <RenderFriends/> : page === 3 ? <Teams/> : null}
+                    {page === 1 ? <RenderTournaments/> : page === 2 ? <Friends/> : page === 3 ? <Teams/> : null}
                 </div>
             </div>
         );
-    }
-
-    if (users === '') {
-        fetchData();
-        fetchUserData();
-        fetchAllUsers();
     }
 
     return (
