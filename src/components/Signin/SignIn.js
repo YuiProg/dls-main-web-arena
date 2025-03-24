@@ -113,14 +113,16 @@ const Signup = () => {
           alignItems: 'center',
           justifyContent: 'center'
         }} />
-        <NavLink to='/HomePage'>
-          <img src={require('../images/logo.png')} style={{
-            width: 350,
-            height: 130,
-            position: 'absolute',
-            margin: 50,
-            cursor: 'pointer'
-          }} />
+        <NavLink to='../HomePage' style={{
+          position: 'absolute',
+          top: '20px',
+          right: '80px',
+          color: 'white',
+          textDecoration: 'none',
+          fontSize: '16px',
+          fontWeight: 'bold'
+        }}>
+          Home
         </NavLink>
         <div className="signup-container">
           <h2>CREATE NEW ACCOUNT</h2>

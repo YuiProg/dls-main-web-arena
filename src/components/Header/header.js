@@ -46,7 +46,7 @@ const Header = (props) => {
   };
 
   return (
-    <div className="app-container" style={{ fontFamily: "'Bai Jamjuree', sans-serif", width: "100%", overflow: "hidden" }}>
+    <div className="app-container" style={{ fontFamily: "'Bai Jamjuree', sans-serif" }}>
       <header className={`${props.headerclass}`}>
         <div className="nav-container">
           <nav className="main-nav">
@@ -91,9 +91,7 @@ const Header = (props) => {
         </div>
       </header>
 
-      <div style={{ width: "100%", position: "relative", overflow: "hidden" }}>
-        {signin ? <Signup/> : <MainContent/>}
-      </div>
+      {signin ? <Signup/> : <MainContent/>}
     </div>
   );
 };

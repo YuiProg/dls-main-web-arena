@@ -126,7 +126,6 @@ const UserDashboard = () => {
         pages.News ? <NewsDash/> : 
         pages.Organize ? <TournamentCreation/>: 
         pages.Profile ? <ProfileView/> : null}
-        <Footer/>
       </main>
     </div>
   );

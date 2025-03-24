@@ -6,8 +6,8 @@ import { NavLink } from "react-router";
 
 const MainContent = () => {
     return (
-        <Element name="home" className="element">
-            <div className="main-content">
+        <Element name="home">
+            <div className="main-Content">
                 <div className="content-text">
                     <h1>CREATE, ORGANIZE, AND JOIN TOURNAMENTS</h1>
                     <p>Join us and ignite the gamer within you!</p>

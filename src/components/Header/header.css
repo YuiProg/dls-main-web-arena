@@ -50,10 +50,12 @@ html, body {
   justify-content: space-between;
   width: 100%;
   position: relative;
+  height: 30px;
 }
 
 .main-nav {
   width: 100%;
+  height: inherit;
 }
 
 .nav-links {
@@ -75,6 +77,7 @@ html, body {
   font-weight: bold;
   font-size: small;
   text-transform: uppercase;
+  margin-right: auto;
 }
 
 .nav-links li a:hover {
@@ -141,7 +144,7 @@ html, body {
     display: flex;
   }
   .nav-container{
-    height: 50px;
+    height: 30px;
   }
   .nav-links {
     position: fixed;
@@ -176,6 +179,9 @@ html, body {
 @media (min-width: 481px) and (max-width: 768px) {
   .hamburger {
     display: flex;
+  }
+  .nav-container{
+    height: 30px;
   }
 
   .nav-links {
