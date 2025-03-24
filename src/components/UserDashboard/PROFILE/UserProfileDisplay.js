@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 import './ProfileView.css';
-import { motion } from "motion/react";
 import { doc, getDoc, setDoc, arrayUnion } from "firebase/firestore";
 import { DB } from "../../firebase-config";
-import { IoIosGitPullRequest } from "react-icons/io";
 
 
 const DisplayUser = (data) => {
 
     const USER_DATA = [data.user];
-    const CURRENT_USER = [data.currentUser];
-    const [open, setOpen] = useState(false);
-    const [follow, setFollow] = useState('');
     const [isFriend, setIsFriend] = useState('');
     const [requested, setRequested] = useState('');
     const [sent, setSent] = useState('');
@@ -46,7 +41,7 @@ const DisplayUser = (data) => {
         const getSelectedData = (await getDoc(doc(DB, 'users', data.user.id))).data();
 
         const check = getSelectedData.friends.some(datas => datas.id === data.currentUser.id);
-        const checkFR = data.currentUser.friendRQ.some(datas => datas.id == getSelectedData.id);
+        const checkFR = data.currentUser.friendRQ.some(datas => datas.id === getSelectedData.id);
         setRequested(checkFR);
         setIsFriend(check);
     }
@@ -60,7 +55,6 @@ const DisplayUser = (data) => {
             //yung datas ay ang id nung user na naka show sa card
             const getCurrentFriends = await getDoc(doc(DB, 'users', data.currentUser.id));
             const userFriends = getCurrentFriends.data().friends;
-            const selectedUserID = USER_DATA.map(data => data);
 
             const filteredActiveUserFriends = userFriends.filter(selected => selected.id !== data.user.id);
 
@@ -96,10 +90,10 @@ const DisplayUser = (data) => {
         {data.visible ? 
                 <div className="user-card" onClick={(e) => e.stopPropagation()}>
                     <div className="user-header">
-                        <img src={require('../../images/qiyana.jpeg')} style={{width: '100%', height: 'inherit', display: 'flex', objectFit: 'cover'}}/>
+                        <img alt="" src={require('../../images/qiyana.jpeg')} style={{width: '100%', height: 'inherit', display: 'flex', objectFit: 'cover'}}/>
                     </div>
                     <div className="header-profile">
-                        <img src={require('../../images/c4.png')} style={{width: '100%', height: 'inherit', borderRadius: '500px', position: 'inherit', objectFit: 'cover'}}/>
+                        
                     </div>
                     <div style={{margin: 0}}>
                         <h1>

@@ -285,7 +285,7 @@ const TournamentCreation = () => {
                     <h1 style={{ color: 'white', marginBottom: 20 }}>SETUP</h1>
                     <div className="setup">
                         <p style={{ margin: 0, marginBottom: 0, fontSize: 30 }}>Name</p>
-                        <input type="text" style={{ width: '130%', backgroundColor: '#1d1c1c', height: 30, fontSize: 20 }} placeholder="Tournament Name" value={name} onChange={(text) => setName(text.target.value)} required />
+                        <input type="text" style={{ width: '98%', backgroundColor: '#1d1c1c', height: 30, fontSize: 20 }} placeholder="Tournament Name" value={name} onChange={(text) => setName(text.target.value)} required />
                         <p style={{ margin: 0, marginBottom: 0, fontSize: 30 }}>Game</p>
                         <select className="game-select-option" onChange={(e) => setGame(e.target.value)}>
                             <option>SELECT GAME</option>
@@ -352,15 +352,15 @@ const TournamentCreation = () => {
                             <button onClick={() => setScreenshot(true)}>Enabled</button>
                         </div>
                         <h1>Details</h1>
-                        <textarea placeholder="Enter tournament details" onChange={(e) => setDetails(e.target.value)} />
+                        <input placeholder="Enter tournament details" onChange={(e) => setDetails(e.target.value)} />
                         <h1>Rules</h1>
-                        <textarea placeholder="Enter tournament rules" onChange={(e) => setRules(e.target.value)} />
+                        <input placeholder="Enter tournament rules" onChange={(e) => setRules(e.target.value)} />
                         <h1>Prizes</h1>
-                        <textarea placeholder="Enter tournament prizes" onChange={(e) => setPrizes(e.target.value)} />
+                        <input placeholder="Enter tournament prizes" onChange={(e) => setPrizes(e.target.value)} />
                         <h1>Schedule</h1>
                         <input type="date" placeholder="Enter tournament schedule" onChange={(e) => setSchedule(e.target.value)} />
                         <h1>Contact</h1>
-                        <textarea placeholder="Enter contact information" onChange={(e) => setContact(e.target.value)} />
+                        <input placeholder="Enter contact information" onChange={(e) => setContact(e.target.value)} />
                         <h1>Upload Poster</h1>
                         <input type="file" onChange={(e) => setPoster(e.target.files[0])} />
                     </div>
@@ -395,7 +395,6 @@ const TournamentCreation = () => {
                     </div>
                     <div className="page-button2">
                         <button className="previous-button" onClick={() => setCurrentPage(3)}>PREVIOUS</button>
-                        <button onClick={generateBracket} className="next-button">GENERATE BRACKET</button>
                         <button onClick={saveData} className="next-button">SUBMIT</button>
                     </div>
                 </>

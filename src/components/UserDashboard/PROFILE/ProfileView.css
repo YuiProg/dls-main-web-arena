@@ -4,14 +4,6 @@
     background-color: #1d1c1c;
 }
 
-.header-image {
-    position: relative;
-    width: 100%;
-    height: 35vh;
-    background-color: #e0dcdc;
-    display: flex;
-}
-
 .user-infos {
     width: 100%;
     height: 10vh;
@@ -55,15 +47,120 @@
     border-bottom: 1px solid white;
     cursor: pointer;
 }
+.header-image {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background-color: #333;
+  overflow: visible;
+}
+
+.cover-image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.cover-picture {
+  width: 100%;
+  height: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cover-picture:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.cover-picture input {
+  display: none;
+}
+
+.profile-picture-container {
+  position: absolute;
+  bottom: -125px;
+  left: 40px;
+  z-index: 10;
+}
 
 .profile-picture {
-    width: 15%;
-    height: 25vh;
-    border-radius: 100%;
-    background-color: rgb(0, 0, 0);
-    position: absolute;
-    transform: translateX(40px) translateY(220px);
+  position: absolute;
+  transform: translateX(40px) translateY(-250px);
+  background-color: black;
+  height: 250px;
+  width: 250px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
 }
+
+.profile-picture:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.profile-picture input {
+  display: none;
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-picture .FaCamera {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.profile-picture:hover .FaCamera {
+  opacity: 1;
+}
+
+.upload-progress-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.upload-progress-bar {
+  height: 10px;
+  background-color: #4CAF50;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.upload-progress-text {
+  margin-left: 10px;
+  color: white;
+  font-size: 14px;
+}
+
 
 #btn {
   margin: 2px;

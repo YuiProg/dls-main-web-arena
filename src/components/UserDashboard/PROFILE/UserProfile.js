@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import '../PROFILE/ProfileView.css';
-import { doc, getDoc, collection, getDocs, setDoc, arrayUnion} from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, setDoc, arrayUnion, updateDoc } from "firebase/firestore";
 import { auth, DB } from "../../firebase-config";
 import { motion } from "motion/react";
 import { FaSearch } from "react-icons/fa";
 import DisplayUser from "./UserProfileDisplay";
 import Teams from "./Teams/Teams";
+import { FaCamera } from "react-icons/fa";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 
 const ProfileView = () => {
     //gawin tong optimized use onsnapshot instead of getdocs
@@ -19,15 +21,19 @@ const ProfileView = () => {
     const [userSelected, setSelectedUser] = useState('');
     const [displayUser, setDisplayUser] = useState(false);
     const [friends, setFriends] = useState();
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
     var searched = '';
     var searchedUSER = '';
+
+    // Firebase storage reference
+    const storage = getStorage();
 
     const fetchUserData = async () => {
         const user = auth.currentUser.uid;
         const data = doc(DB, 'users', user);
         const userData = await getDoc(data);
         
-
         if (userData.exists()) {
             setUser(userData.data());
             return;
@@ -36,7 +42,6 @@ const ProfileView = () => {
         }
     }
     
-
     const fetchAllUsers = async () => {
         try {
             const users = [{}];
@@ -52,6 +57,7 @@ const ProfileView = () => {
             console.log(error.message);
         }
     }
+
     const fetchData = async () => { //eto yung pang fetch ng data sa firebase
         const tournas = collection(DB, 'tournaments');
             try {
@@ -73,6 +79,189 @@ const ProfileView = () => {
             fetchAllUsers();
         }
     }, [users, displayUser, page]);
+
+    const deletePreviousImage = async (imageUrl) => {
+        if (!imageUrl) return;
+        
+        try {
+            // Extract the storage path from the URL
+            // Firebase Storage URLs typically look like:
+            // https://firebasestorage.googleapis.com/v0/b/[PROJECT_ID].appspot.com/o/[FILE_PATH]?alt=media&token=[TOKEN]
+            const urlPath = decodeURIComponent(imageUrl.split('/o/')[1].split('?')[0]);
+            console.log(urlPath)
+            const imageRef = ref(storage, urlPath);
+            
+            await deleteObject(imageRef);
+            console.log('Previous image deleted successfully');
+        } catch (error) {
+            console.error('Error deleting previous image:', error);
+        }
+    };
+
+    // Handle file upload for profile and cover pictures
+    const handleImageUpload = async (e, imageType) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        setUploading(true);
+        setUploadProgress(0);
+        
+        // Create a unique file path in Firebase Storage
+        const userId = auth.currentUser.uid;
+        const timestamp = new Date().getTime();
+        const filePath = `users/${userId}/${imageType}_${timestamp}`;
+        const storageRef = ref(storage, filePath);
+        
+        // Create upload task
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        
+        // Listen for upload progress
+        uploadTask.on('state_changed', 
+            (snapshot) => {
+                // Track upload progress
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setUploadProgress(progress);
+            },
+            (error) => {
+                // Handle upload errors
+                console.error("Upload error:", error);
+                setUploading(false);
+            },
+            async () => {
+                // Upload completed, get download URL
+                try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    
+                    // Update user document with the image URL
+                    const userRef = doc(DB, 'users', userId);
+                    const userData = await getDoc(userRef);
+                    
+                    if (userData.exists()) {
+                        const updatedFields = {};
+                        
+                        if (imageType === 'profile') {
+                            // Delete the previous profile picture if it exists
+                            if (userData.data().profilePicture) {
+                                await deletePreviousImage(userData.data().profilePicture);
+                            }
+                            updatedFields.profilePicture = downloadURL;
+                        } else if (imageType === 'cover') {
+                            // Delete the previous cover picture if it exists
+                            if (userData.data().coverPicture) {
+                                await deletePreviousImage(userData.data().coverPicture);
+                            }
+                            updatedFields.coverPicture = downloadURL;
+                        }
+                        
+                        await updateDoc(userRef, updatedFields);
+                        
+                        // Update local user state to reflect changes
+                        setUser(prevUser => ({
+                            ...prevUser,
+                            ...updatedFields
+                        }));
+                    }
+                    
+                    setUploading(false);
+                } catch (error) {
+                    console.error("Error getting download URL:", error);
+                    setUploading(false);
+                }
+            }
+        );
+    };
+
+    // Component for rendering user profile and cover images
+    const ProfileHeader = () => {
+        return (
+            <div className="header-image">
+                <div 
+                    className="cover-image-container" 
+                    style={{
+                        backgroundImage: users.coverPicture ? `url(${users.coverPicture})` : 'none',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        width: '100%',
+                        height: '100%'
+                    }}
+                >
+                    <label className="cover-picture">
+                        <FaCamera 
+                            style={{
+                                width: 60,
+                                height: 60,
+                                opacity: 0.7,
+                                color: '#fff'
+                            }}
+                        />
+                        <input 
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, 'cover')}
+                        />
+                    </label>
+                </div>
+                
+                <div className="profile-picture-container">
+                    <label className="profile-picture">
+                        {/* Background image for the profile picture */}
+                        <div className="profile-image" style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '50%',
+                            backgroundImage: users.profilePicture ? `url(${users.profilePicture})` : 'none',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0
+                        }}>
+                            {/* Show default image if no profile picture */}
+                            {!users.profilePicture && (
+                                <img 
+                                    src={require('../../images/icons8-person-96.png')} 
+                                    alt="Default Profile"
+                                    style={{ 
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'cover'
+                                    }}
+                                />
+                            )}
+                        </div>
+                        
+                        {/* Camera icon overlay */}
+                        <div className="camera-overlay">
+                            <FaCamera 
+                                style={{
+                                    color: "white",
+                                    width: 60,
+                                    height: 60,
+                                    zIndex: 5
+                                }}
+                            />
+                        </div>
+                        
+                        <input 
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageUpload(e, 'profile')}
+                        />
+                    </label>
+                </div>
+                
+                {uploading && (
+                    <div className="upload-progress-container">
+                        <div 
+                            className="upload-progress-bar" 
+                            style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                        <span className="upload-progress-text">{uploadProgress.toFixed(0)}%</span>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
 
     const RenderTournaments = () => {
@@ -343,41 +532,38 @@ const ProfileView = () => {
     const RenderDisplay = () => {
         return (
             <div className="profileview">
-            {displayUser ? 
-            <motion.div
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            className="dp-container" onClick={() => setDisplayUser(false)}>
-                 <DisplayUser user={userSelected} visible={displayUser} currentUser={users}/>
-            </motion.div>
-            : null}
-            <div className="header-image">
-                <img src={require('../../images/qiyana.jpeg')} style={{width: '100%', height: 'inherit', display: 'flex', objectFit: 'cover'}}/>
-                <div className="profile-picture">
-                <img src={require('../../images/c4.png')} style={{width: '100%', height: 'inherit', borderRadius: '500px', position: 'inherit', objectFit:'cover'}}/>
+                {displayUser ? 
+                <motion.div
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                className="dp-container" onClick={() => setDisplayUser(false)}>
+                    <DisplayUser user={userSelected} visible={displayUser} currentUser={users}/>
+                </motion.div>
+                : null}
+                
+                <ProfileHeader />
+                
+                <div className="user-infos">
+                    <h1 style={{margin: 0, paddingTop: 30}}>{users.username}</h1>
+                    <p style={{margin: 0, color: 'grey', marginBottom: 20}}>ID: {auth.currentUser.uid}</p>
+                </div>
+                <div className="more-info">
+                    <ul>
+                        <li onClick={() => setPage(1)}>TOURNAMENTS</li>
+                        <li onClick={() => 
+                            {
+                                setPage(2);
+                                setFPP(0);
+                            }
+                        }>FRIENDS</li>
+                        <li onClick={() => setPage(3)}>TEAMS</li>
+                        <li onClick={() => setPage(4)}>LINKS</li>
+                    </ul>
+                </div>
+                <div className="Main-Content-Profile">
+                    {page === 1 ? <RenderTournaments/> : page === 2 ? <RenderFriends/> : page === 3 ? <Teams/> : null}
                 </div>
             </div>
-            <div className="user-infos">
-                <h1 style={{margin: 0, paddingTop: 30}}>{users.username}</h1>
-                <p style={{margin: 0, color: 'grey', marginBottom: 20}}>ID: {auth.currentUser.uid}</p>
-            </div>
-            <div className="more-info">
-                <ul>
-                    <li onClick={() => setPage(1)}>TOURNAMENTS</li>
-                    <li onClick={() => 
-                        {
-                            setPage(2);
-                            setFPP(0);
-                        }
-                    }>FRIENDS</li>
-                    <li onClick={() => setPage(3)}>TEAMS</li>
-                    <li onClick={() => setPage(4)}>LINKS</li>
-                </ul>
-            </div>
-            <div className="Main-Content-Profile">
-                {page === 1 ? <RenderTournaments/> : page === 2 ? <RenderFriends/> : page === 3 ? <Teams/> : null}
-            </div>
-        </div>
         );
     }
 
@@ -408,5 +594,4 @@ const ProfileView = () => {
         </>
     );
 }
-
 export default ProfileView

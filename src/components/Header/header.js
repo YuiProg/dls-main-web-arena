@@ -33,7 +33,6 @@ const Header = (props) => {
       {/* Header */}
       <header className={`${props.headerclass}`}>
         <div className="nav-container">
-          <img src={require('../images/logo.png')} alt="Dark League Arena Logo" className="logo" />
           <nav>
             <ul className="nav-links">
               <Link to="home" smooth={true} duration={500}><li onClick={() => setSignin(false)}>Home</li></Link>

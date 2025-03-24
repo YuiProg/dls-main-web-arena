@@ -264,11 +264,17 @@
 }
 
 /* Buttons */
-.page-button1,
 .page-button2 {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 0% 100%;
   margin-top: 40px;
+  margin-left: 100px;
+  width: 88.5%;
+}
+.page-button1{
+  margin-top: 40px;
+  margin-left: 100px;
+  width: 88.5%;
 }
 
 .next-button,
@@ -282,13 +288,12 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  height: 40px;
+  width: 200px;
 }
 
 .next-button {
+  justify-self: end;
   background-color: #6c5ce7;
   color: white;
   box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
@@ -571,13 +576,8 @@ input[type="file"]::-webkit-file-upload-button:hover {
   .page-button1,
   .page-button2 {
     flex-direction: column;
-    gap: 15px;
   }
 
-  .next-button,
-  .previous-button {
-    width: 100%;
-  }
   
   .page-2 {
     grid-template-columns: 1fr;
