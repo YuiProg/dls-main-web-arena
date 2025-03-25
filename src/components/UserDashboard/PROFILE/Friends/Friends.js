@@ -91,29 +91,41 @@ const Friends = () => {
                             zIndex: 50,
                         }
                     }>
-                        {
-                             user.some(i => i.friends.some(j => j.id === data.id))
-                                ? <p style={{margin: 0}}>ALREADY FRIENDS</p> 
-                                : data.friendRQ.some(req => req.id === auth.currentUser.uid) 
-                                    ? <p>REQUEST SENT</p> 
-                                    : (
-                                        <button 
-                                            style={{
-                                                border: 'none',
-                                                backgroundColor: 'red',
-                                                width: 100,
-                                                height: 30, 
-                                                borderRadius: 10,
-                                                color: 'white',
-                                                cursor: 'pointer',
-                                                marginTop: 15,
-                                            }} 
-                                            onClick={() => AddFriend(data)}
-                                        >
-                                            ADD FRIEND
-                                        </button>
-                                    )
-                        }
+                        {user.some(i => i.friendRQ.some(j => j.id === data.id)) ? (
+                            <button 
+                                style={{
+                                    border: 'none',
+                                    backgroundColor: 'green',
+                                    width: 200,
+                                    height: 30, 
+                                    borderRadius: 10,
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    marginTop: 15,
+                                }} 
+                                onClick={() => AcceptRequest(data)}>
+                                ACCEPT FRIEND REQUEST
+                            </button>
+                        ) : user.some(i => i.friends.some(j => j.id === data.id)) ? (
+                            <p style={{margin: 0}}>ALREADY FRIENDS</p> 
+                        ) : data.friendRQ.some(req => req.id === auth.currentUser.uid) ? (
+                            <p style={{margin: 0}}>REQUEST SENT</p> 
+                        ) : (
+                            <button 
+                                style={{
+                                    border: 'none',
+                                    backgroundColor: 'red',
+                                    width: 100,
+                                    height: 30, 
+                                    borderRadius: 10,
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    marginTop: 15,
+                                }} 
+                                onClick={() => AddFriend(data)}>
+                                ADD FRIEND
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -219,7 +231,7 @@ const Friends = () => {
             await setDoc(doc(DB, 'users', auth.currentUser.uid), {
                 ...fetch_main_user,
                 friends: arrayUnion(fetch_selected_user),
-                friendRQ: fetch_main_user.friendRQ.filter(data => data.id != data.id)
+                friendRQ: fetch_main_user.friendRQ.filter(s => s.id != data.id)
            }, {merge: true})
               .then(() => {
                 alert('REQUEST ACCEPTED');
