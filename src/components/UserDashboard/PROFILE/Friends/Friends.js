@@ -104,14 +104,14 @@ const Friends = () => {
                                     marginTop: 15,
                                 }} 
                                 onClick={() => AcceptRequest(data)}>
-                                ACCEPT FRIEND REQUEST
-                            </button>
-                        ) : user.some(i => i.friends.some(j => j.id === data.id)) ? (
-                            <p style={{margin: 0}}>ALREADY FRIENDS</p> 
-                        ) : data.friendRQ.some(req => req.id === auth.currentUser.uid) ? (
-                            <p style={{margin: 0}}>REQUEST SENT</p> 
-                        ) : (
-                            <button 
+                                    ACCEPT FRIEND REQUEST
+                                </button>
+                            ) : user.some(i => i.friends.some(j => j.id === data.id)) ? (
+                                <p style={{margin: 0}}>ALREADY FRIENDS</p> 
+                            ) : data.friendRQ.some(req => req.id === auth.currentUser.uid) ? (
+                                <p style={{margin: 0}}>REQUEST SENT</p> 
+                            ) : (
+                                <button 
                                 style={{
                                     border: 'none',
                                     backgroundColor: 'red',
@@ -123,7 +123,7 @@ const Friends = () => {
                                     marginTop: 15,
                                 }} 
                                 onClick={() => AddFriend(data)}>
-                                ADD FRIEND
+                                    ADD FRIEND
                             </button>
                         )}
                     </div>
@@ -137,9 +137,11 @@ const Friends = () => {
         if (index < 2) {
             return <div className="friends-main-container">
             <div style={{width: 'inherit', height: 'inherit', position: 'absolute', zIndex: 5}}/>
-            <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
+            {data.coverPicture ? <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/> :
+            <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>}
             <div>
-                <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>
+            {data.profilePicture ? <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/> :
+            <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>}
             </div>
             <div style={{position: 'relative'}}>
                 <h1>{data.username}</h1>
@@ -178,13 +180,14 @@ const Friends = () => {
         </div>
         }
     });
-    console.log(user_friends_main);
     const DisplayUserFriends = user_friends_main.map(data => 
         <div className="friends-main-container">
             <div style={{width: 'inherit', height: 'inherit', position: 'absolute', zIndex: 5}}/>
-            <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
+            {data.coverPicture ? <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/> :
+            <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>}
             <div>
-                <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>
+            {data.profilePicture ? <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/> :
+            <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>}
             </div>
             <div style={{position: 'relative'}}>
                 <h1>{data.username}</h1>
@@ -223,19 +226,22 @@ const Friends = () => {
 
     const AcceptRequest = async (data) => {
         try {
-            let USER_MAIN_FRIENDRQ = [];
             const fetch_main_user = (await getDoc(doc(DB, 'users', auth.currentUser.uid))).data();
             const fetch_selected_user = (await getDoc(doc(DB, 'users', data.id))).data();
-
-        
+            
             await setDoc(doc(DB, 'users', auth.currentUser.uid), {
                 ...fetch_main_user,
                 friends: arrayUnion(fetch_selected_user),
                 friendRQ: fetch_main_user.friendRQ.filter(s => s.id != data.id)
            }, {merge: true})
-              .then(() => {
-                alert('REQUEST ACCEPTED');
-              });
+              .then(async () => {
+                await setDoc(doc(DB, 'users', fetch_selected_user.id), {
+                    ...fetch_selected_user,
+                    friends: arrayUnion(fetch_main_user)
+                }, {merge: true}).then(() => {
+                    alert('REQUEST ACCEPTED');
+                });
+            });
         } catch (error) {
             console.log(error.message);
         }
