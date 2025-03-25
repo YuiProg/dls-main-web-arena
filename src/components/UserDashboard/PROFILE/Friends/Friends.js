@@ -72,12 +72,15 @@ const Friends = () => {
 
     const DisplayAllUsers = excludeFriends.map((data, index)=> 
         {
-            if (index < 2) {
+            if (index < 3) {
                 return <div className="friends-main-container">
                 <div style={{width: 'inherit', height: 'inherit', position: 'absolute', zIndex: 5}}/>
-                <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
+                {data.coverPicture ? <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/> :
+                <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>}
+                
                 <div>
-                    <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50}}/>
+                    {data.profilePicture ? <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/> :
+                    <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>}
                 </div>
                 <div style={{position: 'relative'}}>
                     <h1>{data.username}</h1>
@@ -88,18 +91,29 @@ const Friends = () => {
                             zIndex: 50,
                         }
                     }>
-                        {data.friendRQ.some(data => data.id === auth.currentUser.uid) ? <p>HAS ALREADY SENT A REQUEST</p> : <button style=
                         {
-                            {
-                                border: 'none',
-                                backgroundColor: 'red',
-                                width: 100,
-                                height: 30, 
-                                borderRadius: 10,
-                                color: 'white',
-                                cursor: 'pointer',
-                            }
-                        } onClick={() => AddFriend(data)}>ADD FRIEND</button>}
+                             user.some(i => i.friends.some(j => j.id === data.id))
+                                ? <p style={{margin: 0}}>ALREADY FRIENDS</p> 
+                                : data.friendRQ.some(req => req.id === auth.currentUser.uid) 
+                                    ? <p>REQUEST SENT</p> 
+                                    : (
+                                        <button 
+                                            style={{
+                                                border: 'none',
+                                                backgroundColor: 'red',
+                                                width: 100,
+                                                height: 30, 
+                                                borderRadius: 10,
+                                                color: 'white',
+                                                cursor: 'pointer',
+                                                marginTop: 15,
+                                            }} 
+                                            onClick={() => AddFriend(data)}
+                                        >
+                                            ADD FRIEND
+                                        </button>
+                                    )
+                        }
                     </div>
                 </div>
             </div>
@@ -111,9 +125,9 @@ const Friends = () => {
         if (index < 2) {
             return <div className="friends-main-container">
             <div style={{width: 'inherit', height: 'inherit', position: 'absolute', zIndex: 5}}/>
-            <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
+            <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
             <div>
-                <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50}}/>
+                <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>
             </div>
             <div style={{position: 'relative'}}>
                 <h1>{data.username}</h1>
@@ -124,30 +138,41 @@ const Friends = () => {
                         zIndex: 50,
                     }
                 }>
-                     {data.friendRQ.some(data => data.id === auth.currentUser.uid) ? <p>HAS ALREADY SENT A REQUEST</p> : <button style=
-                        {
-                            {
-                                border: 'none',
-                                backgroundColor: 'red',
-                                width: 100,
-                                height: 30, 
-                                borderRadius: 10,
-                                color: 'white',
-                                cursor: 'pointer',
-                            }
-                        } onClick={() => AddFriend(data)}>ADD FRIEND</button>}
+                     {
+                             user.some(i => i.friends.some(j => j.id === data.id))
+                                ? <p style={{margin: 0}}>ALREADY FRIENDS</p> 
+                                : data.friendRQ.some(req => req.id === auth.currentUser.uid) 
+                                    ? <p>REQUEST SENT</p> 
+                                    : (
+                                        <button 
+                                            style={{
+                                                border: 'none',
+                                                backgroundColor: 'red',
+                                                width: 100,
+                                                height: 30, 
+                                                borderRadius: 10,
+                                                color: 'white',
+                                                cursor: 'pointer',
+                                                marginTop: 15,
+                                            }} 
+                                            onClick={() => AddFriend(data)}
+                                        >
+                                            ADD FRIEND
+                                        </button>
+                                    )
+                        }
                 </div>
             </div>
         </div>
         }
     });
-
+    console.log(user_friends_main);
     const DisplayUserFriends = user_friends_main.map(data => 
         <div className="friends-main-container">
             <div style={{width: 'inherit', height: 'inherit', position: 'absolute', zIndex: 5}}/>
-            <img src={require('../../../images/qiyana.jpeg')} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
+            <img src={data.coverPicture} style={{width: 'inherit', height: 'inherit', position: 'absolute', objectFit: 'cover', left: 0, borderRadius: 10}} alt="header-profile"/>
             <div>
-                <img src={require('../../../images/icons8-person-96.png')} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50}}/>
+                <img src={data.profilePicture} alt="Profile" style={{border: '1px solid white', borderRadius: '50%', width: 120, height: 120, position: 'relative', marginTop: 50, objectFit: 'cover'}}/>
             </div>
             <div style={{position: 'relative'}}>
                 <h1>{data.username}</h1>
@@ -182,6 +207,27 @@ const Friends = () => {
     for (let i = 0; i < DisplayFriendRequests.length; i++) {
         friendRequests = DisplayFriendRequests[i];
     }
+    //accept friend request goes here
+
+    const AcceptRequest = async (data) => {
+        try {
+            let USER_MAIN_FRIENDRQ = [];
+            const fetch_main_user = (await getDoc(doc(DB, 'users', auth.currentUser.uid))).data();
+            const fetch_selected_user = (await getDoc(doc(DB, 'users', data.id))).data();
+
+        
+            await setDoc(doc(DB, 'users', auth.currentUser.uid), {
+                ...fetch_main_user,
+                friends: arrayUnion(fetch_selected_user),
+                friendRQ: fetch_main_user.friendRQ.filter(data => data.id != data.id)
+           }, {merge: true})
+              .then(() => {
+                alert('REQUEST ACCEPTED');
+              });
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
 
     const DisplayFriendRQS = friendRequests.map((data, index) => {
         if (index < 2) {
@@ -200,6 +246,27 @@ const Friends = () => {
                         zIndex: 50,
                     }
                 }>
+                    <button style={{
+                        width: 100,
+                        height: 30,
+                        borderRadius: 10,
+                        border: 'none',
+                        backgroundColor: 'green',
+                        color: 'white',
+                        cursor: 'pointer',
+                        marginTop: 15,
+                    }} onClick={() => AcceptRequest(data)}>ACCEPT</button>
+                    <button style={{
+                        width: 100,
+                        height: 30,
+                        borderRadius: 10,
+                        border: 'none',
+                        backgroundColor: 'red',
+                        color: 'white',
+                        cursor: 'pointer',
+                        marginTop: 15,
+                        marginLeft: 10
+                    }}>DECLINE</button>
                 </div>
             </div>
         </div>

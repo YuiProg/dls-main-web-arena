@@ -1,6 +1,6 @@
 .friends-main {
     width: 93%;
-    height: 130vh;
+    height: 135vh;
     color: white;
 }
 
@@ -30,8 +30,8 @@
 }
 
 .friends-content-container {
-    width: 95%;
-    height: 110vh;
+    width: 108%;
+    height: 125vh;
     border: 1px solid white;
     padding: 30px;
 }
@@ -41,4 +41,11 @@
     text-align: center;
     position: relative;
     margin-top: 20px;
+    scale: 1;
+    transition: scale .3s ease;
+}
+
+.friends-main-container:hover {
+    scale: 1.03;
+    transition: scale .3s ease;
 }
