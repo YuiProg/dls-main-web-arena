@@ -77,31 +77,9 @@ const Login = () => {
   return (
     <>
       <div className="signup">
-        <img
-          src={require("../images/unnamed.jpg")}
-          style={{
-            position: "absolute",
-            zIndex: -5,
-            width: "100%",
-            height: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          alt="background"
-        />
-        <NavLink to="/HomePage">
-          <img
-            src={require("../images/logo.png")}
-            style={{
-              width: 350,
-              height: 130,
-              position: "absolute",
-              margin: 50,
-              cursor: "pointer",
-            }}
-            alt="logo"
-          />
-        </NavLink>
+      <a className="home-link" href="/HomePage">
+          Home
+        </a>
         <div className="signup-container">
           <h2>LOG IN</h2>
           <form onSubmit={handleLogin}>

@@ -77,7 +77,7 @@ html, body {
   font-weight: bold;
   font-size: small;
   text-transform: uppercase;
-  margin-right: auto;
+  margin-left: 65vw;
 }
 
 .nav-links li a:hover {
