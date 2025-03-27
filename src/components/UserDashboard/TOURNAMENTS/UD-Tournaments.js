@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Element } from "react-scroll";
 import { DB } from "../../firebase-config";
 import { collection, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import './ud-tourna.css';
 
 const UDTournaments = () => {
     const [gameSET, setGame] = useState('N/A');
     const [tournaments, setTournaments] = useState([]);
+    const [filteredTournaments, setFilteredTournaments] = useState([]);
     const [selectedTournamentId, setSelectedTournamentId] = useState(null);
     const [selectedTab, setSelectedTab] = useState('overview');
     const [detailsTab, setDetailsTab] = useState('details');
     const [isLoading, setIsLoading] = useState(true);
+    const [currentUserId, setCurrentUserId] = useState(null);
     
     // Registration panel states
     const [joinStep, setJoinStep] = useState(1);
@@ -18,6 +21,13 @@ const UDTournaments = () => {
 
     const fetchData = async () => {
         setIsLoading(true);
+        const auth = getAuth();
+        const user = auth.currentUser;
+        
+        if (user) {
+            setCurrentUserId(user.uid);
+        }
+
         const tournas = collection(DB, 'tournaments');
         try {
             const data = await getDocs(tournas);
@@ -25,6 +35,7 @@ const UDTournaments = () => {
                 id: doc.id,
                 ...doc.data()
             }));
+            
             console.log("Fetched tournaments:", dataItems);
             setTournaments(dataItems);
             setIsLoading(false);
@@ -37,6 +48,19 @@ const UDTournaments = () => {
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        // Filter tournaments based on game and exclude current user's tournaments
+        let filtered = gameSET === 'N/A' 
+            ? tournaments 
+            : tournaments.filter((tournament) => tournament.game === gameSET);
+            
+        if (currentUserId) {
+            filtered = filtered.filter(tournament => tournament.ownerId !== currentUserId);
+        }
+        
+        setFilteredTournaments(filtered);
+    }, [gameSET, tournaments, currentUserId]);
 
     const renderTournamentCard = (tournament) => {
         return (
@@ -349,11 +373,6 @@ const UDTournaments = () => {
             </div>
         );
     };
-
-    // Filter tournaments based on selected game
-    const filteredTournaments = gameSET === 'N/A' 
-        ? tournaments 
-        : tournaments.filter((tournament) => tournament.game === gameSET);
 
     return (
         <Element name="tournaments">

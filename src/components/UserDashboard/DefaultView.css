@@ -1,0 +1,176 @@
+/* Main container */
+.dashboard-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+  
+  /* Left column */
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Profile card */
+  .profile-card {
+    background-color: #232225;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+  }
+  
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-icon {
+    font-size: 2.5rem;
+    color: #cf2122;
+    margin-bottom: 10px;
+  }
+  
+  .profile-header h1 {
+    font-size: 1.3rem;
+    color: #ffffff;
+    margin: 0;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+  /* Level up section */
+  .level-up-container {
+    background-color: #414141;
+    border-radius: 8px;
+    padding: 15px;
+  }
+  
+  .level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .level-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .level-up-icon {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-right: 8px;
+  }
+  
+  .level-text {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #ffffff;
+  }
+  
+  .xp-button {
+    background-color: #cf2122;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+    transition: background-color 0.3s;
+  }
+  
+  .xp-button:hover {
+    background-color: #a81a1b;
+  }
+  
+  /* XP Bar */
+  .xp-bar-container {
+    width: 100%;
+    background-color: #2d2d2d;
+    border-radius: 4px;
+    height: 8px;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  
+  .xp-bar {
+    height: 100%;
+    background-color: #28a745;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+  
+  .xp-text {
+    font-size: 0.8rem;
+    color: #b0b0b0;
+  }
+  
+  /* Compact Friend Requests */
+  .compact-friend-requests {
+    background-color: #232225;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+  }
+  
+  .compact-title {
+    font-size: 0.9rem;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #414141;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Right column - Main Content */
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .content-section {
+    background-color: #232225;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+  }
+  
+  .section-title {
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin: 0 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #cf2122;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .profile-header {
+      flex-direction: row;
+      text-align: left;
+    }
+    
+    .profile-icon {
+      margin-right: 15px;
+      margin-bottom: 0;
+    }
+  }

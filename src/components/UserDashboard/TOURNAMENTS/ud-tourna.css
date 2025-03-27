@@ -1,16 +1,22 @@
 /* Tournament Grid Layout CSS */
 .tournaments-page {
-  padding: 2rem;
+  padding: 1rem;
   background-color: #121212;
-  min-height: 100vh;
   color: white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tournaments-page.nested-view {
+  padding: 0;
+  background-color: transparent;
 }
 
 .heading {
   color: white;
   text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 1.5rem;
   font-weight: bold;
 }
 
@@ -18,8 +24,9 @@
 .games-container {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .games-choice {
@@ -31,6 +38,7 @@
   padding: 0.5rem;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 80px;
 }
 
 .games-choice:hover {
@@ -39,13 +47,13 @@
 }
 
 .games-choice.active {
-  border: 2px solid #4a6dff;
-  background-color: rgba(74, 109, 255, 0.1);
+  border: 2px solid #cf2122;
+  background-color: rgba(207, 33, 34, 0.1);
 }
 
 .games-choice img {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 10px;
 }
@@ -53,34 +61,41 @@
 .games-choice p {
   color: white;
   margin-top: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
+  text-align: center;
 }
 
 /* Tournament Grid Styles */
 .tournament-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.tournament-grid.nested-grid {
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+  margin-bottom: 0;
 }
 
 .tournament-card {
-  background-color: #1e2239;
-  border-radius: 10px;
+  background-color: #232225;
+  border-radius: 6px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tournament-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .tournament-banner {
-  height: 150px;
+  height: 120px;
   overflow: hidden;
 }
 
@@ -91,26 +106,27 @@
 }
 
 .tournament-title {
-  padding: 1rem;
+  padding: 0.8rem;
   color: white;
   font-weight: bold;
-  font-size: 1.1rem;
-  background-color: #283057;
+  font-size: 1rem;
+  background-color: #2d2d2d;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .tournament-info {
-  padding: 1rem;
+  padding: 0.8rem;
   color: #e0e0e0;
+  font-size: 0.85rem;
 }
 
 .tournament-date {
   display: flex;
   align-items: center;
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .tournament-date .icon {
@@ -119,23 +135,24 @@
 
 .tournament-date .time {
   margin-left: auto;
+  font-size: 0.8rem;
 }
 
 .tournament-location {
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
   color: #b0b0b0;
 }
 
 .tournament-organizer {
   display: flex;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .organizer-logo {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   margin-right: 0.5rem;
   object-fit: cover;
@@ -149,18 +166,19 @@
 }
 
 .load-more-btn {
-  background-color: #283057;
+  background-color: #cf2122;
   color: white;
   border: none;
-  padding: 0.75rem 2rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 5px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s ease;
+  font-size: 0.9rem;
 }
 
 .load-more-btn:hover {
-  background-color: #3a4675;
+  background-color: #e53935;
 }
 
 /* Loading and No Tournaments Messages */
@@ -168,52 +186,47 @@
   color: white;
   text-align: center;
   grid-column: 1 / -1;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
+  font-size: 1rem;
 }
 
-/* Tournament Details Panel Styles - New design based on screenshot */
+/* Tournament Details Panel Styles */
 .tournament-details-panel {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
   background-color: #121212;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 /* Tournament Header with Organization */
 .tournament-header {
   background-color: #121212;
-  padding: 1rem 2rem;
+  padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tournament-logo {
-  display: grid;
-  margin-bottom: 1rem;
-  grid-template-columns: 1fr 1fr;
-  height: 50px;
-}
-
-.tournament-logo img {
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
 }
 
 .tournament-org-info {
   display: flex;
   flex-direction: column;
+  margin-bottom: 0.5rem;
 }
 
 .org-name {
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: bold;
   text-transform: uppercase;
 }
@@ -227,7 +240,7 @@
 .follow-btn {
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   padding: 0.2rem 0.5rem;
   border-radius: 3px;
   margin-right: 0.5rem;
@@ -236,19 +249,20 @@
 
 .followers-count {
   color: #b0b0b0;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
 }
 
 .tournament-title-container {
-  margin: 1rem 0;
+  margin: 0.5rem 0;
 }
 
 .tournament-title-large {
   color: white;
-  font-size: 2rem;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
   font-weight: bold;
   text-transform: uppercase;
   margin: 0;
+  word-break: break-word;
 }
 
 /* Main Navigation Tabs */
@@ -257,14 +271,15 @@
   overflow-x: auto;
   background-color: #121212;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 0.5rem;
 }
 
 .main-tabs button {
-  padding: 1rem 1.5rem;
+  padding: 0.8rem 1rem;
   background: none;
   border: none;
   color: #b0b0b0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -278,40 +293,39 @@
 
 .main-tabs button.active {
   color: white;
-  border-bottom: 3px solid #e7a93e;
+  border-bottom: 3px solid #cf2122;
 }
 
 /* Tournament Banner */
 .tournament-banner-large {
   width: 100%;
-  height: 300px;
+  height: 200px;
   overflow: hidden;
 }
 
 .tournament-banner-large img {
-  height: inherit;
-  width: inherit;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Two Column Layout */
 .tournament-content-container {
   display: flex;
-  padding: 0 2rem;
-  margin-top: 2rem;
-  gap: 2rem;
+  flex-direction: column;
+  padding: 0 1rem;
+  margin-top: 1rem;
+  gap: 1rem;
 }
 
 .tournament-content {
-  flex: 2;
-  background-color: #1E1E1E;
+  background-color: #232225;
   border-radius: 5px;
   overflow: hidden;
 }
 
 .registration-panel {
-  flex: 1;
-  background-color: #1E1E1E;
+  background-color: #232225;
   border-radius: 5px;
   overflow: hidden;
   padding: 1rem;
@@ -321,16 +335,17 @@
 .details-tabs {
   display: flex;
   overflow-x: auto;
-  background-color: #1E1E1E;
+  background-color: #232225;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 0.5rem;
 }
 
 .details-tabs button {
-  padding: 0.8rem 1.2rem;
+  padding: 0.7rem 1rem;
   background: none;
   border: none;
   color: #b0b0b0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -344,43 +359,44 @@
 
 .details-tabs button.active {
   color: white;
-  background-color: #2a2a2a;
+  background-color: #2d2d2d;
 }
 
 /* Details Content */
 .details-content {
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .details-section h3 {
   margin-top: 0;
   color: white;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .detail-item {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .detail-label {
   color: #b0b0b0;
-  font-size: 0.8rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
   text-transform: uppercase;
 }
 
 .detail-value {
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  word-break: break-word;
 }
 
 /* Registration Panel */
 .registration-step {
   display: flex;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   opacity: 1;
 }
 
@@ -391,14 +407,14 @@
 .step-number {
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  margin-right: 1rem;
+  font-size: 0.8rem;
+  margin-right: 0.8rem;
   flex-shrink: 0;
 }
 
@@ -408,33 +424,44 @@
 
 .step-title {
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .step-actions {
-  margin-top: 1rem;
+  margin-top: 0.8rem;
 }
 
-.create-account-btn, .register-team-btn, .create-account-confirm, .auto-join-btn {
-  background-color: #e7a93e;
-  color: black;
+.create-account-btn, 
+.register-team-btn, 
+.create-account-confirm, 
+.auto-join-btn {
+  background-color: #cf2122;
+  color: white;
   border: none;
-  padding: 0.75rem;
+  padding: 0.6rem;
   border-radius: 5px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
+  transition: background-color 0.2s ease;
+}
+
+.create-account-btn:hover,
+.register-team-btn:hover,
+.create-account-confirm:hover,
+.auto-join-btn:hover {
+  background-color: #e53935;
 }
 
 .login-link {
   text-align: center;
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
 }
 
 .login-link a {
@@ -445,15 +472,16 @@
 .or-separator {
   color: #b0b0b0;
   text-align: center;
-  margin: 1rem 0;
+  margin: 0.8rem 0;
   position: relative;
+  font-size: 0.75rem;
 }
 
 .or-separator::before, .or-separator::after {
   content: '';
   position: absolute;
   top: 50%;
-  width: 40%;
+  width: 35%;
   height: 1px;
   background-color: rgba(255, 255, 255, 0.1);
 }
@@ -468,50 +496,98 @@
 
 .join-message {
   color: #b0b0b0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-align: center;
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
 }
 
 /* Back Button */
 .back-container {
   display: flex;
-  justify-self: end;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 }
 
 .back-btn {
-  background-color: #283057;
+  background-color: #cf2122;
   color: white;
   border: none;
-  padding: 0.75rem 2rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 5px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s ease;
+  font-size: 0.85rem;
 }
 
 .back-btn:hover {
-  background-color: #3a4675;
+  background-color: #e53935;
 }
 
 /* Media Queries */
-@media (max-width: 1024px) {
+@media (min-width: 768px) {
+  .tournaments-page {
+    padding: 1.5rem;
+  }
+  
+  .games-choice {
+    width: 90px;
+  }
+  
+  .games-choice img {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .tournament-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .tournament-banner {
+    height: 150px;
+  }
+  
+  .tournament-title {
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .tournament-info {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .tournament-banner-large {
+    height: 250px;
+  }
+  
   .tournament-content-container {
-    flex-direction: column;
+    flex-direction: row;
+    padding: 0 1.5rem;
+    margin-top: 1.5rem;
+    gap: 1.5rem;
   }
   
   .registration-panel {
-    margin-top: 1rem;
+    min-width: 300px;
   }
 }
 
-@media (max-width: 768px) {
-  .main-tabs, .details-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
+@media (min-width: 1024px) {
+  .tournaments-page {
+    padding: 2rem;
+  }
+  
+  .tournament-content-container {
+    padding: 0 2rem;
+  }
+  
+  .tournament-banner-large {
+    height: 300px;
   }
   
   .tournament-title-large {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 }
