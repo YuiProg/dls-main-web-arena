@@ -24,6 +24,7 @@ const ProfileView = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [searched, setSearched] = useState('');
   const [searchedUSER, setSearchedUSER] = useState('');
+  const [selectedTournament, setSelectedTournament] = useState(null);
 
   const storage = getStorage();
 
@@ -192,7 +193,14 @@ const ProfileView = () => {
     const NameFiltered = filtered.filter(i => i.name === DISPLAYTOURNAMENTS || i.owner === DISPLAYTOURNAMENTS || i.tournamentId === DISPLAYTOURNAMENTS);
     
     const DataFiltered = NameFiltered.map((items, index) => (
-      <motion.tr key={index} initial={{opacity: 0, y: 75}} animate={{opacity: 1, y: 0}} transition={{delay: `.${index}`, duration: .5}}>
+      <motion.tr 
+        key={index} 
+        initial={{opacity: 0, y: 75}} 
+        animate={{opacity: 1, y: 0}} 
+        transition={{delay: `.${index}`, duration: .5}}
+        onClick={() => setSelectedTournament(items)}
+        className="clickable-row"
+      >
         <td style={{fontWeight: 'bold', fontSize: 'large'}}>{items.name}</td>
         <td>{items.game}</td>
         <td>{items.mode}</td>
@@ -202,7 +210,14 @@ const ProfileView = () => {
     ));
 
     const tableData = filtered.map((items,index) => (
-      <motion.tr key={index} initial={{opacity: 0, y: 75}} animate={{opacity: 1, y: 0}} transition={{delay: `.${index}`, duration: .5}}>
+      <motion.tr 
+        key={index} 
+        initial={{opacity: 0, y: 75}} 
+        animate={{opacity: 1, y: 0}} 
+        transition={{delay: `.${index}`, duration: .5}}
+        onClick={() => setSelectedTournament(items)}
+        className="clickable-row"
+      >
         <td style={{fontWeight: 'bold', fontSize: 'large'}}>{items.name}</td>
         <td>{items.game}</td>
         <td>{items.mode}</td>
@@ -248,6 +263,77 @@ const ProfileView = () => {
             {DISPLAYTOURNAMENTS === '' ? tableData : DataFiltered}
           </tbody>
         </table>
+
+        {/* Tournament Details Modal */}
+        {selectedTournament && (
+          <div className="tournament-modal" onClick={() => setSelectedTournament(null)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <button className="close-modal" onClick={() => setSelectedTournament(null)}>
+                ✕
+              </button>
+              
+              <h1>TOURNAMENT NAME: {selectedTournament.name}</h1>
+              
+              <div className="modal-tabs">
+                <button className="active">OVERVIEW</button>
+                <button>PARTICIPANTS</button>
+                <button>BRACKETS</button>
+                <button>MEDIA</button>
+                <button>ANNOUNCEMENTS</button>
+                <button>CONTACT</button>
+              </div>
+              
+              <div className="tournament-info">
+                <div className="info-section">
+                  <h2>{selectedTournament.game}</h2>
+                  
+                  <div className="detail-group">
+                    <h3>DETAILS</h3>
+                    <div className="detail-item">
+                      <span>Date and Time:</span>
+                      <span>{selectedTournament.dateCreated}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span>Prizes:</span>
+                      <span>{selectedTournament.prizes || "Not specified"}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span>Format:</span>
+                      <span>{selectedTournament.mode}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="join-section">
+                  <h3>JOIN TOURNAMENT</h3>
+                  <div className="join-steps">
+                    <div className="step">
+                      <div className="step-number">1</div>
+                      <div className="step-content">
+                        <div className="step-title">CREATE ACCOUNT</div>
+                        <button className="step-button">Sign Up</button>
+                      </div>
+                    </div>
+                    <div className="step">
+                      <div className="step-number">2</div>
+                      <div className="step-content">
+                        <div className="step-title">REGISTER TEAM</div>
+                        <button className="step-button">Register</button>
+                      </div>
+                    </div>
+                    <div className="step">
+                      <div className="step-number">3</div>
+                      <div className="step-content">
+                        <div className="step-title">JOIN TOURNAMENT</div>
+                        <button className="step-button">Join Now</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
