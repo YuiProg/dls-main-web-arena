@@ -296,8 +296,8 @@ const TournamentCreation = () => {
                         <p style={{ margin: 0, marginBottom: 0, fontSize: 30 }}>Type</p>
                         <div className="radio-input" style={{ marginTop: 15 }}>
                             <label>
-                                <input type="radio" id="value-1" name="value-radio" value="1" onClick={() => setType('PERSONAL')} required />
-                                <span>Personal</span>
+                                <input type="radio" id="value-1" name="value-radio" value="1" onClick={() => setType('PRIVATE')} required />
+                                <span>Private</span>
                             </label>
                             <label>
                                 <input type="radio" id="value-2" name="value-radio" value="2" onClick={() => setType('PUBLIC')} required />
