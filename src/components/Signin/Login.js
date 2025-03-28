@@ -60,10 +60,13 @@ const Login = () => {
           tournaments: 0,
           friends: [],
           friendRQ: [],
-          team: []
+          team: [],
+          profilePicture: null,
+          coverPicture: null
         }).then(() => {
           alert('USER LOGGED IN');
           navigate('/dashboard');
+          window.location.reload();
         });
       }
 

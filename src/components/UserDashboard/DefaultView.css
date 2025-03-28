@@ -142,7 +142,26 @@
     flex-direction: column;
     gap: 20px;
   }
-  
+
+  .friend-request-button {
+    border: none;
+    margin-left: 10px;
+    margin-top: 5px;
+    border-radius: 10px;
+    width: 60px;
+    height: 30px;
+    scale: 1;
+    transition: scale .3s ease;
+    color: white;
+    font-weight: bold;
+  }
+
+
+  .friend-request-button:hover {
+    cursor: pointer;
+    scale: 1.1;
+    transition: scale .3s ease;
+  }
   .content-section {
     background-color: #232225;
     border-radius: 10px;

@@ -8,7 +8,7 @@ import NewsDash from "./NEWS/newsD.js";
 import TournamentCreation from "../CreateTournament/TournamentCreate.js";
 import ProfileView from "./PROFILE/UserProfile.js";
 import { auth, DB } from "../firebase-config";
-import { doc, getDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { FaUserCircle } from 'react-icons/fa';
 import './DefaultView.css';
 import waitingImage from '../../assets/images/logos/waiting.png';
@@ -24,14 +24,93 @@ const MyTournaments = () => (
   </div>
 );
 
-const FriendRequests = () => (
-  <div className="dashboard-section">
-    <h2>FRIEND REQUESTS</h2>
-    <div className="content-box">
-      {/* Friend requests will go here */}
+
+const FriendRequests = () => {
+  const [USER_DATA, setUserData] = useState(null);
+
+  const fetch = async () => {
+    const docRef = doc(DB, 'users', auth.currentUser.uid);
+    await onSnapshot(docRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        setUserData(docSnapshot.data());
+      } else {
+        console.log('error fetching');
+      }
+    }, (error) => {
+      console.log(error.message);
+    });
+  }
+
+  useEffect(() => {
+    fetch();
+  },[]);
+
+
+  const AcceptRequest = async (selected_data) => { //pa mano mano pato di pako sanay mag OOP hahaha naka class nalang sana to
+
+    try {
+      const currentUserData = (await getDoc(doc(DB, 'users', auth.currentUser.uid))).data();
+      const fetch_selected_user_data = (await getDoc(doc(DB, 'users', selected_data.id))).data();
+
+      await setDoc(doc(DB, 'users', auth.currentUser.uid), { //accept request
+        ...currentUserData,
+        friends: arrayUnion(fetch_selected_user_data),
+        friendRQ: currentUserData.friendRQ.filter(data => data.id !== fetch_selected_user_data.id) //i filter out yung request tas lapag sa db
+      }, { merge:true }).then(async () => {
+        await setDoc(doc(DB, 'users', fetch_selected_user_data.id), {
+          ...fetch_selected_user_data,
+          friends: arrayUnion(currentUserData)
+        }, { merge: true }).then(() => {
+          alert('user accepted');
+        });
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  const DeclineRequest = async (selected_user_data) => {
+
+    try {
+      const current_user_data = (await getDoc(doc(DB, 'users', auth.currentUser.uid))).data();
+      const selected_data = (await getDoc(doc(DB, 'users', selected_user_data.id))).data();
+
+      await setDoc(doc(DB, 'users', auth.currentUser.uid), {
+        ...current_user_data,
+        friendRQ: current_user_data.friendRQ.filter(data => data.id != selected_data.id)
+      }).then(() => {
+        console.log('success decline');
+      });
+
+    } catch (error) {
+      console.log(error.message);
+    }
+
+  }
+
+  const renderFriends = USER_DATA ? USER_DATA.friendRQ.map((data) => 
+    <>
+      <div className="content-box" style={{width: 'auto', minWidth: '220px', marginTop: 20}}>
+        <div style={{width: 50, height: 50, marginLeft: 'auto', marginRight: 'auto'}}>
+        {data.profilePicture ? <img src={data.profilePicture} style={{width: 'inherit', height: 'inherit', objectFit: 'cover', borderRadius: '50%'}}/>
+        : <img src={require('../images/icons8-person-96.png')} style={{width: 'inherit', height: 'inherit', objectFit: 'cover', borderRadius: '50%', backgroundColor: 'white'}}/>}
+        </div>
+        <p style={{marginLeft: 10}}>{data.username === 'TREK' ? 'TREK (ADMIN)' 
+        : data.username === 'Patrick Javier' ? 'Patrick Javier (ADMIN)' 
+        : data.username}</p>
+        <button className="friend-request-button" style={{backgroundColor: 'green'}} onClick={() => AcceptRequest(data)}>ACCEPT</button>
+        <button className="friend-request-button" style={{backgroundColor: 'red'}} onClick={() => DeclineRequest(data)}>IGNORE</button>
+        </div> 
+      </>
+  ) : null;
+
+  return (
+    <div className="dashboard-section">
+      <h2>FRIEND REQUESTS</h2>
+        {USER_DATA ? renderFriends : <p style={{textAlign: 'center'}}>LOADING...</p>}
     </div>
-  </div>
-);
+  );
+};
 
 const WaitingTournaments = ({ count = 2 }) => (
   <div className="dashboard-section highlight-section">
@@ -87,14 +166,17 @@ const DefaultView = ({ username }) => {
       </div>
     </div>
   );
-
+  console.log(username?.profilePicture ? 'meron' : 'wala');
   return (
     <div className="dashboard-container">
       {/* Left Column */}
       <div className="left-column">
         <div className="profile-card">
           <div className="profile-header">
-            <FaUserCircle className="profile-icon" />
+            <div style={{width: '80px', height: '80px', backgroundColor: 'white', borderRadius: '50%'}}>
+              {username?.profilePicture ? <img src={username.profilePicture} style={{width: 'inherit', height: 'inherit',borderRadius: '50%', objectFit: 'cover'}} /> 
+              : <img src={require('../images/icons8-person-96.png')} style={{width: 'inherit', height: 'inherit',borderRadius: '50%', objectFit: 'cover'}} />}
+            </div>
             <h1>HELLO {username?.username?.toUpperCase() || 'PLAYER'}!</h1>
           </div>
           
@@ -185,12 +267,13 @@ const SidebarItem = ({ Icon, label, active, onClick }) => (
   </li>
 );
 
+
+
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [activePage, setActivePage] = useState('Dashboard');
   const [username, setUsername] = useState(null);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
@@ -203,6 +286,7 @@ const UserDashboard = () => {
 
     return () => unsubscribe();
   }, [navigate]);
+
 
   const fetchData = async (currentUser) => {
     try {
@@ -217,7 +301,6 @@ const UserDashboard = () => {
       console.error("Error fetching user data:", error);
     }
   };
-
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -228,12 +311,20 @@ const UserDashboard = () => {
     }
   };
 
+  
+
   const handleNavigation = (page) => {
     setActivePage(page);
   };
 
   if (!user) {
     return <div className="loading-screen">Loading...</div>;
+  }
+
+  const RenderFriends = () => {
+    return(
+      <p>TEST</p>
+    );
   }
 
   const renderActivePage = () => {

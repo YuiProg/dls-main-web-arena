@@ -44,10 +44,13 @@ const Signup = () => {
           tournaments: 0,
           friends: [],
           friendRQ: [],
-          team: []
+          team: [],
+          profilePicture: null,
+          coverPicture: null
         }).then(() => {
           alert('USER CREATED');
           navigate('/Login');
+          window.location.reload();
         });
 
       } catch (error) {
@@ -81,10 +84,13 @@ const Signup = () => {
           tournaments: 0,
           friends: [],
           friendRQ: [],
-          team: []
+          team: [],
+          profilePicture: null,
+          coverPicture: null
         }).then(() => {
           alert('SIGNED UP WITH GOOGLE!');
           navigate('/dashboard');
+          window.location.reload();
         });
       }
 

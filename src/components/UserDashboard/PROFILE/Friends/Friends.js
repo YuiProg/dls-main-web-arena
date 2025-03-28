@@ -68,6 +68,30 @@ const Friends = () => {
         }
     }
     
+    const Unfriend = async (selected_user_data) => { //TBD
+        
+        try {
+
+            const current_user_data = (await getDoc(doc(DB,'users', auth.currentUser.uid))).data();
+            const selected_data = (await getDoc(doc(DB, 'users', selected_user_data.id))).data();
+            console.log(selected_data.friends.filter(data => data.id !== current_user_data.id));
+
+            await setDoc(doc(DB, 'users', auth.currentUser.uid), {
+                ...current_user_data,
+                friends: current_user_data.friends.filter(data => data.id !== selected_user_data.id)
+            }).then(async () => {
+                await setDoc(doc(DB, 'users', selected_user_data.id), {
+                    ...selected_data,
+                    friends: selected_data.friends.filter(data => data.id !== current_user_data.id)
+                }).then(() => {
+                    alert('user unfriended');
+                })
+            });
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     const excludeFriends = all_users.filter(data => data.id != auth.currentUser.uid);
 
     const DisplayAllUsers = excludeFriends.map((data, index)=> 
@@ -152,29 +176,41 @@ const Friends = () => {
                         zIndex: 50,
                     }
                 }>
-                     {
-                             user.some(i => i.friends.some(j => j.id === data.id))
-                                ? <p style={{margin: 0}}>ALREADY FRIENDS</p> 
-                                : data.friendRQ.some(req => req.id === auth.currentUser.uid) 
-                                    ? <p>REQUEST SENT</p> 
-                                    : (
-                                        <button 
-                                            style={{
-                                                border: 'none',
-                                                backgroundColor: 'red',
-                                                width: 100,
-                                                height: 30, 
-                                                borderRadius: 10,
-                                                color: 'white',
-                                                cursor: 'pointer',
-                                                marginTop: 15,
-                                            }} 
-                                            onClick={() => AddFriend(data)}
-                                        >
-                                            ADD FRIEND
-                                        </button>
-                                    )
-                        }
+                     {user.some(i => i.friendRQ.some(j => j.id === data.id)) ? (
+                            <button 
+                                style={{
+                                    border: 'none',
+                                    backgroundColor: 'green',
+                                    width: 200,
+                                    height: 30, 
+                                    borderRadius: 10,
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    marginTop: 15,
+                                }} 
+                                onClick={() => AcceptRequest(data)}>
+                                    ACCEPT FRIEND REQUEST
+                                </button>
+                            ) : user.some(i => i.friends.some(j => j.id === data.id)) ? (
+                                <p style={{margin: 0}}>ALREADY FRIENDS</p> 
+                            ) : data.friendRQ.some(req => req.id === auth.currentUser.uid) ? (
+                                <p style={{margin: 0}}>REQUEST SENT</p> 
+                            ) : (
+                                <button 
+                                style={{
+                                    border: 'none',
+                                    backgroundColor: 'red',
+                                    width: 100,
+                                    height: 30, 
+                                    borderRadius: 10,
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    marginTop: 15,
+                                }} 
+                                onClick={() => AddFriend(data)}>
+                                    ADD FRIEND
+                            </button>
+                        )}
                 </div>
             </div>
         </div>
@@ -209,7 +245,7 @@ const Friends = () => {
                             color: 'white',
                             cursor: 'pointer',
                         }
-                    }>UNFRIEND</button>
+                    } onClick={() => Unfriend(data)}>UNFRIEND</button>
                 </div>
             </div>
         </div>
@@ -245,6 +281,25 @@ const Friends = () => {
         } catch (error) {
             console.log(error.message);
         }
+    }
+
+    const DeclineRequest = async (selected_data) => {
+
+        try {
+            const current_user_data = (await getDoc(doc(DB, 'users', auth.currentUser.uid))).data();
+            const selected_user_data = (await getDoc(doc(DB, 'users', selected_data.id))).data();
+
+            await setDoc(doc(DB, 'users', auth.currentUser.uid), {
+                ...current_user_data,
+                friendRQ: selected_user_data.friendRQ.filter(data => data.id != selected_user_data.id)
+            }).then(() => {
+                alert('request declined');
+            });
+
+        } catch (error) {
+
+        }
+
     }
 
     const DisplayFriendRQS = friendRequests.map((data, index) => {
@@ -284,7 +339,7 @@ const Friends = () => {
                         cursor: 'pointer',
                         marginTop: 15,
                         marginLeft: 10
-                    }}>DECLINE</button>
+                    }} onClick={() => DeclineRequest(data)}>DECLINE</button>
                 </div>
             </div>
         </div>

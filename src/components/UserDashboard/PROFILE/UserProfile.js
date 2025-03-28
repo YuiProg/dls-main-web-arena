@@ -8,6 +8,7 @@ import DisplayUser from "./UserProfileDisplay";
 import Teams from "./Teams/Teams";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import SocialLinks from "./SocialLinks";
+import Friends from "./Friends/Friends";
 
 const ProfileView = () => {
   const [users, setUser] = useState('');
@@ -70,12 +71,10 @@ const ProfileView = () => {
   };
 
   useEffect(() => {
-    if (!displayUser && page === 2) {
       fetchData();
       fetchUserData();
       fetchAllUsers();
-    }
-  }, [users, displayUser, page]);
+  }, []);
 
   const deletePreviousImage = async (imageUrl) => {
     if (!imageUrl) return;
@@ -338,131 +337,7 @@ const ProfileView = () => {
     );
   };
 
-  const RenderFriends = () => {
-    const friendFilter = allUsers.filter(friends => friends.id !== users.id);
-
-    const RequestFriend = async (id) => {
-      let requests = [];
-      const request = doc(DB, 'users', id);
-      const fetch = await getDoc(request);
-      const user = fetch.data().friendRQ;
-      requests = Array.isArray(user) ? user : [];
-
-      if (requests.some(data => data.id === users.id) || users.friends.some(data => data.id === fetch.data().id)) {
-        alert('REQUEST ALREADY SENT');
-        return;
-      }
-
-      try {
-        requests.push(users);
-        await setDoc(doc(DB, 'users', id), {
-          ...fetch.data(),
-          friendRQ: requests
-        });
-        alert('Request Sent.');
-      } catch (error) {
-        console.log('Error sending friend request:', error.message);
-      }
-    };
-
-    const FindFriends = friendFilter.map((data, index) => (
-      <div key={index} className="friend-card" onClick={() => { setDisplayUser(!displayUser); setSelectedUser(data); }}>
-        <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>
-        <img src={require('../../images/icons8-person-96.png')} alt="User"/>
-      </div>
-    ));
-
-    const searchFriends = allUsers.filter((data) => data.username === USERSEARCHED || data.id === USERSEARCHED);
-    const DisplaySearched = searchFriends.map((data,index) => (
-      <div key={index} className="friend-card" onClick={() => RequestFriend(data.id)}>
-        <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>
-        <img src={require('../../images/icons8-person-96.png')} alt="User"/>
-      </div>
-    ));
-
-    const AcceptFriend = async (user) => {
-      try {
-        const fetch = await getDoc(doc(DB, 'users', user));
-        const DATA = await getDoc(doc(DB, 'users', users.id));
-        const selectedUser = fetch.data();
-
-        if (users.friends.some(data => data.id === user)) {
-          alert('request already sent');
-          return;
-        }
-
-        const newFriends = [...(Array.isArray(users.friends) ? users.friends : []), selectedUser];
-        const filteredRequests = users.friendRQ.filter(data => data.id !== user);
-
-        await setDoc(doc(DB,'users',users.id), {
-          ...DATA.data(),
-          friends: newFriends,
-          friendRQ: filteredRequests
-        });
-        
-        await setDoc(doc(DB, 'users', selectedUser.id), {
-          friends: arrayUnion(users)
-        }, { merge: true });
-
-        fetchData();
-        fetchAllUsers();
-        fetchUserData();
-      } catch (error) {
-        console.log('Error accepting friend:', error.message);
-      }
-    };
-
-    const MainFriends = users.friends?.map((data,index) => (
-      <div key={index} className="friend-card" onClick={() => { setDisplayUser(!displayUser); setSelectedUser(data); }}>
-        <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>
-        <img src={require('../../images/icons8-person-96.png')} alt="User"/>
-      </div>
-    ));
-
-    const FriendRequests = users.friendRQ?.map((data, index) => (
-      <div key={index} className="friend-card">
-        <p style={{margin: 0, padding: 0, fontWeight: 'bold'}}>{data.username}</p>
-        <img src={require('../../images/icons8-person-96.png')} alt="User"/>
-        <button onClick={() => AcceptFriend(data.id)}>ACCEPT</button>
-        <button>DECLINE</button>
-      </div>
-    ));
-
-    return (
-      <div className='friends-tab'>
-        <h1 className="friend-selection" onClick={() => setFPP(0)}>
-          FRIENDS ({users.friends?.length || 0})
-        </h1>
-        <h1 className="friend-selection" onClick={() => setFPP(1)}>
-          FIND FRIENDS
-        </h1>
-        <h1 className="friend-selection" onClick={() => setFPP(2)}>
-          {users.friendRQ?.length === 0 ? 'FRIEND REQUEST (none)' : `FRIEND REQUESTS (${users.friendRQ?.length})`}
-        </h1>
-        {FRIENDS_PAGE === 1 && (
-          <div>
-            <input 
-              type="text" 
-              placeholder="Enter ID or Name" 
-              onChange={(e) => setSearchedUSER(e.target.value)}
-              style={{ width: '50%', marginBottom: 20 }}
-            />
-            <FaSearch 
-              color="white" 
-              style={{marginLeft: 20, cursor: 'pointer'}} 
-              onClick={() => setSearchedUser(searchedUSER)}
-            />
-          </div>
-        )}
-        <div className="friends-grid">
-          {USERSEARCHED === '' 
-            ? (FRIENDS_PAGE === 1 ? FindFriends : FRIENDS_PAGE === 2 ? FriendRequests : MainFriends) 
-            : DisplaySearched}
-        </div>
-      </div>
-    );
-  };
-
+  
   const RenderDisplay = () => {
     return (
       <div className="profileview">
@@ -490,7 +365,7 @@ const ProfileView = () => {
         
         <div className="Main-Content-Profile">
           {page === 1 ? <RenderTournaments/> : 
-           page === 2 ? <RenderFriends/> : 
+           page === 2 ? <Friends/> : 
            page === 3 ? <Teams/> : 
            page === 4 ? <SocialLinks user={users} /> : null}
         </div>
@@ -498,11 +373,6 @@ const ProfileView = () => {
     );
   };
 
-  if (users === '') {
-    fetchData();
-    fetchUserData();
-    fetchAllUsers();
-  }
 
   return (
     <>
