@@ -76,6 +76,7 @@ const Signup = () => {
         return;
       } else {
         await setDoc(doc(DB, 'users', user.uid), {
+          id: user.uid,
           email: user.email,
           username: user.displayName,
           darkcoins: 0,
